@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=postgres
+      - DB_USERNAME=healthcare_user
+      - DB_PASSWORD=healthcare_pass
+      - ENCRYPTION_KEY=your-base64-encoded-256-bit-key
+      - JWT_SECRET=your-jwt-secret
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - healthcare-network
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: healthcare_qr
+      POSTGRES_USER: healthcare_user
+      POSTGRES_PASSWORD: healthcare_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - healthcare-network
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - healthcare-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  healthcare-network:
+    driver: bridge

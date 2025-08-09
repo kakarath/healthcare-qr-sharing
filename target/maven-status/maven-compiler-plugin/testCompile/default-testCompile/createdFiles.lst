@@ -1,0 +1,10 @@
+com/healthcare/util/EncryptionServiceTest.class
+com/healthcare/e2e/HealthcareQRSharingE2ETest.class
+com/healthcare/testutil/TestDataBuilder.class
+com/healthcare/service/FhirServiceTest.class
+com/healthcare/controller/QRControllerIntegrationTest.class
+com/healthcare/HealthcareQRSharingApplicationTests.class
+com/healthcare/repository/ConsentRepositoryTest.class
+com/healthcare/config/TestSecurityConfig$1.class
+com/healthcare/service/SecureQRCodeServiceTest.class
+com/healthcare/config/TestSecurityConfig.class

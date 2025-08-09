@@ -1,0 +1,84 @@
+package com.healthcare.util;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.SecureRandom;
+import java.util.Base64;
+
+@Component
+@Slf4j
+public class EncryptionService {
+    
+    @Value("${healthcare.security.encryption.key}")
+    private String encryptionKeyBase64;
+    
+    @Value("${healthcare.security.encryption.algorithm}")
+    private String algorithm;
+    
+    private static final int GCM_TAG_LENGTH = 16;
+    private static final int GCM_IV_LENGTH = 12;
+    
+    public String encrypt(String plaintext) {
+        try {
+            SecretKey secretKey = getSecretKey();
+            Cipher cipher = Cipher.getInstance(algorithm);
+            
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            SecureRandom.getInstanceStrong().nextBytes(iv);
+            
+            GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
+            
+            byte[] ciphertext = cipher.doFinal(plaintext.getBytes());
+            
+            // Combine IV and ciphertext
+            byte[] encryptedWithIv = new byte[iv.length + ciphertext.length];
+            System.arraycopy(iv, 0, encryptedWithIv, 0, iv.length);
+            System.arraycopy(ciphertext, 0, encryptedWithIv, iv.length, ciphertext.length);
+            
+            return Base64.getEncoder().encodeToString(encryptedWithIv);
+            
+        } catch (Exception e) {
+            log.error("Encryption failed", e);
+            throw new RuntimeException("Encryption failed", e);
+        }
+    }
+    
+    public String decrypt(String encryptedData) {
+        try {
+            byte[] encryptedWithIv = Base64.getDecoder().decode(encryptedData);
+            
+            // Extract IV and ciphertext
+            byte[] iv = new byte[GCM_IV_LENGTH];
+            byte[] ciphertext = new byte[encryptedWithIv.length - GCM_IV_LENGTH];
+            
+            System.arraycopy(encryptedWithIv, 0, iv, 0, iv.length);
+            System.arraycopy(encryptedWithIv, iv.length, ciphertext, 0, ciphertext.length);
+            
+            SecretKey secretKey = getSecretKey();
+            Cipher cipher = Cipher.getInstance(algorithm);
+            
+            GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
+            
+            byte[] plaintext = cipher.doFinal(ciphertext);
+            return new String(plaintext);
+            
+        } catch (Exception e) {
+            log.error("Decryption failed", e);
+            throw new RuntimeException("Decryption failed", e);
+        }
+    }
+    
+    private SecretKey getSecretKey() {
+        byte[] keyBytes = Base64.getDecoder().decode(encryptionKeyBase64);
+        return new SecretKeySpec(keyBytes, "AES");
+    }
+}

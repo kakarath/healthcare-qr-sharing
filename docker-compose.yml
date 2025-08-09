@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_URL=jdbc:h2:mem:testdb
+      - DB_USERNAME=sa
+      - DB_PASSWORD=password
+      - ENCRYPTION_KEY=dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0cw==
+      - JWT_SECRET=dGVzdC1qd3Qtc2VjcmV0LWZvci10ZXN0aW5n
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=healthcare_qr
+      - POSTGRES_USER=healthcare_user
+      - POSTGRES_PASSWORD=healthcare_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

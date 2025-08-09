@@ -1,0 +1,9 @@
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/testutil/TestDataBuilder.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/config/TestSecurityConfig.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/repository/ConsentRepositoryTest.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/service/SecureQRCodeServiceTest.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/util/EncryptionServiceTest.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/service/FhirServiceTest.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/controller/QRControllerIntegrationTest.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/HealthcareQRSharingApplicationTests.java
+/Users/pereozogu/healthcare-qr-sharing/src/test/java/com/healthcare/e2e/HealthcareQRSharingE2ETest.java

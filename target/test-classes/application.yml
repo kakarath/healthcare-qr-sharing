@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+    
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+
+healthcare:
+  security:
+    encryption:
+      key: dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0cw==
+      algorithm: AES/GCM/NoPadding
+    jwt:
+      secret: dGVzdC1qd3Qtc2VjcmV0LWZvci10ZXN0aW5n
+      expiration: 3600000
+  fhir:
+    server:
+      base-url: http://localhost:8080/fhir

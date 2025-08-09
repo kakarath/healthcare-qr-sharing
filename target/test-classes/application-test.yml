@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9999 # WireMock server
+
+healthcare:
+  security:
+    encryption:
+      key: dGVzdC1lbmNyeXB0aW9uLWtleS0yNTYtYml0cw== # base64 encoded test key
+      algorithm: AES/GCM/NoPadding
+    jwt:
+      secret: test-jwt-secret
+    qr:
+      expiration-minutes: 15
+  fhir:
+    server:
+      base-url: http://localhost:9999/fhir
+  audit:
+    enabled: false
+
+logging:
+  level:
+    com.healthcare: DEBUG
+    org.springframework.security: DEBUG
