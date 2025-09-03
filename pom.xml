@@ -13,7 +13,7 @@
 
     <groupId>com.healthcare</groupId>
     <artifactId>healthcare-qr-sharing</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>Healthcare QR Data Sharing</name>
     <description>Secure FHIR-compliant healthcare data sharing via QR codes</description>
 
