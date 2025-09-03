@@ -11,18 +11,15 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="/">Healthcare QR</a>
-            <div sec:authorize="isAuthenticated()">
-                <span class="navbar-text me-3">Welcome, <span sec:authentication="name"></span></span>
+            <div>
+                <a href="/login" class="btn btn-outline-light me-2">Login</a>
                 <a href="/logout" class="btn btn-outline-light">Logout</a>
-            </div>
-            <div sec:authorize="!isAuthenticated()">
-                <a href="/login" class="btn btn-outline-light">Login</a>
             </div>
         </div>
     </nav>
 
     <main class="container mt-4">
-        <div sec:authorize="hasRole('PATIENT')">
+        <div>
             <h2>Share Your Health Data</h2>
             <div class="card">
                 <div class="card-body">
@@ -75,7 +72,7 @@
             </div>
         </div>
 
-        <div sec:authorize="hasRole('PROVIDER')">
+        <div>
             <h2>Scan Patient QR Code</h2>
             <div class="card">
                 <div class="card-body">

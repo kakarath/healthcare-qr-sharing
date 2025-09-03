@@ -1,0 +1,10 @@
+server:
+  port: 8080
+spring:
+  main:
+    web-application-type: servlet
+  security:
+    enabled: false
+logging:
+  level:
+    root: INFO

@@ -23,3 +23,6 @@ target/
 # IntelliJ
 .idea/
 web-pricer.iml
+
+
+*.log
