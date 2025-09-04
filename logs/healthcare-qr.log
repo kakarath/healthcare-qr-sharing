@@ -1,380 +1,31 @@
-2025-09-03 14:26:10 [main] INFO  com.healthcare.SimpleQRApp - Starting SimpleQRApp using Java 17.0.9 with PID 17318 (/Users/pereozogu/healthcare-qr-sharing/target/classes started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
-2025-09-03 14:26:10 [main] DEBUG com.healthcare.SimpleQRApp - Running with Spring Boot v3.1.12, Spring v6.0.21
-2025-09-03 14:26:10 [main] INFO  com.healthcare.SimpleQRApp - No active profile set, falling back to 1 default profile: "default"
-2025-09-03 14:26:11 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-09-03 14:26:11 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 140 ms. Found 3 JPA repository interfaces.
-2025-09-03 14:26:13 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-2025-09-03 14:26:13 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-09-03 14:26:13 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
-2025-09-03 14:26:13 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-09-03 14:26:13 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2342 ms
-2025-09-03 14:26:13 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-09-03 14:26:14 [main] ERROR com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Exception during pool initialization.
-org.postgresql.util.PSQLException: FATAL: role "healthcare_user" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
-	at org.postgresql.core.v3.QueryExecutorImpl.readStartupMessages(QueryExecutorImpl.java:2825)
-	at org.postgresql.core.v3.QueryExecutorImpl.<init>(QueryExecutorImpl.java:175)
-	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:313)
-	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
-	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
-	at org.postgresql.Driver.makeConnection(Driver.java:443)
-	at org.postgresql.Driver.connect(Driver.java:297)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470)
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100)
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
-	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
-	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
-	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
-	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:332)
-	at org.springframework.boot.jdbc.EmbeddedDatabaseConnection.isEmbedded(EmbeddedDatabaseConnection.java:168)
-	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.isEmbeddedDatabase(DataSourceScriptDatabaseInitializer.java:67)
-	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.isEnabled(AbstractScriptDatabaseInitializer.java:84)
-	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:107)
-	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyDataScripts(AbstractScriptDatabaseInitializer.java:102)
-	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:77)
-	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1815)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1764)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:596)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:518)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:942)
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:615)
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:739)
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:441)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:325)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1327)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1316)
-	at com.healthcare.SimpleQRApp.main(SimpleQRApp.java:14)
-2025-09-03 14:26:14 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-09-03 14:26:14 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.2.25.Final
-2025-09-03 14:26:14 [main] INFO  org.hibernate.cfg.Environment - HHH000406: Using bytecode reflection optimizer
-2025-09-03 14:26:14 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-09-03 14:26:14 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-09-03 14:26:15 [main] ERROR com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Exception during pool initialization.
-org.postgresql.util.PSQLException: FATAL: role "healthcare_user" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
-	at org.postgresql.core.v3.QueryExecutorImpl.readStartupMessages(QueryExecutorImpl.java:2825)
-	at org.postgresql.core.v3.QueryExecutorImpl.<init>(QueryExecutorImpl.java:175)
-	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:313)
-	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
-	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
-	at org.postgresql.Driver.makeConnection(Driver.java:443)
-	at org.postgresql.Driver.connect(Driver.java:297)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470)
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100)
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:437)
-	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:61)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:279)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:193)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:69)
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:119)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:264)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:239)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:216)
-	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:231)
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:199)
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:169)
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1383)
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1454)
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:378)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:354)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1815)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1764)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:596)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:518)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:942)
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:615)
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:739)
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:441)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:325)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1327)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1316)
-	at com.healthcare.SimpleQRApp.main(SimpleQRApp.java:14)
-2025-09-03 14:26:15 [main] WARN  o.h.e.j.e.i.JdbcEnvironmentInitiator - HHH000342: Could not obtain connection to query metadata
-java.lang.NullPointerException: Cannot invoke "org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(java.sql.SQLException, String)" because the return value of "org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.sqlExceptionHelper()" is null
-	at org.hibernate.resource.transaction.backend.jdbc.internal.JdbcIsolationDelegate.delegateWork(JdbcIsolationDelegate.java:116)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.getJdbcEnvironmentUsingJdbcMetadata(JdbcEnvironmentInitiator.java:279)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:193)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator.initiateService(JdbcEnvironmentInitiator.java:69)
-	at org.hibernate.boot.registry.internal.StandardServiceRegistryImpl.initiateService(StandardServiceRegistryImpl.java:119)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.createService(AbstractServiceRegistryImpl.java:264)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.initializeService(AbstractServiceRegistryImpl.java:239)
-	at org.hibernate.service.internal.AbstractServiceRegistryImpl.getService(AbstractServiceRegistryImpl.java:216)
-	at org.hibernate.boot.model.relational.Database.<init>(Database.java:45)
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.getDatabase(InFlightMetadataCollectorImpl.java:231)
-	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.<init>(InFlightMetadataCollectorImpl.java:199)
-	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:169)
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1383)
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1454)
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:378)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:354)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1815)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1764)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:596)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:518)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:942)
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:615)
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:739)
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:441)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:325)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1327)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1316)
-	at com.healthcare.SimpleQRApp.main(SimpleQRApp.java:14)
-2025-09-03 14:26:15 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-09-03 14:26:16 [main] INFO  o.h.s.m.o.b.i.HibernateSearchPreIntegrationService - HSEARCH000034: Hibernate Search version 6.1.6.Final
-2025-09-03 14:26:17 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-09-03 14:26:17 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2025-09-03 14:26:18 [main] ERROR com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Exception during pool initialization.
-org.postgresql.util.PSQLException: FATAL: role "healthcare_user" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
-	at org.postgresql.core.v3.QueryExecutorImpl.readStartupMessages(QueryExecutorImpl.java:2825)
-	at org.postgresql.core.v3.QueryExecutorImpl.<init>(QueryExecutorImpl.java:175)
-	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:313)
-	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
-	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
-	at org.postgresql.Driver.makeConnection(Driver.java:443)
-	at org.postgresql.Driver.connect(Driver.java:297)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470)
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100)
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:437)
-	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:46)
-	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:39)
-	at org.hibernate.tool.schema.internal.exec.ImprovedExtractionContextImpl.getJdbcConnection(ImprovedExtractionContextImpl.java:63)
-	at org.hibernate.tool.schema.extract.spi.ExtractionContext.getQueryResults(ExtractionContext.java:43)
-	at org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorLegacyImpl.extractMetadata(SequenceInformationExtractorLegacyImpl.java:39)
-	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.initializeSequences(DatabaseInformationImpl.java:66)
-	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.<init>(DatabaseInformationImpl.java:60)
-	at org.hibernate.tool.schema.internal.Helper.buildDatabaseInformation(Helper.java:185)
-	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:98)
-	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:284)
-	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:143)
-	at java.base/java.util.HashMap.forEach(HashMap.java:1421)
-	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:140)
-	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37)
-	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35)
-	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:293)
-	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:444)
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1458)
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:378)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:354)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1815)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1764)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:596)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:518)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:942)
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:615)
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:739)
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:441)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:325)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1327)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1316)
-	at com.healthcare.SimpleQRApp.main(SimpleQRApp.java:14)
-2025-09-03 14:26:18 [main] WARN  o.h.e.jdbc.spi.SqlExceptionHelper - SQL Error: 0, SQLState: 28000
-2025-09-03 14:26:18 [main] ERROR o.h.e.jdbc.spi.SqlExceptionHelper - FATAL: role "healthcare_user" does not exist
-2025-09-03 14:26:18 [main] ERROR o.s.o.j.LocalContainerEntityManagerFactoryBean - Failed to initialize JPA EntityManagerFactory: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.GenericJDBCException: Unable to open JDBC Connection for DDL execution [FATAL: role "healthcare_user" does not exist] [n/a]
-2025-09-03 14:26:18 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.GenericJDBCException: Unable to open JDBC Connection for DDL execution [FATAL: role "healthcare_user" does not exist] [n/a]
-2025-09-03 14:26:18 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
-2025-09-03 14:26:18 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+2025-09-04 09:13:06 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 1485 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 09:13:06 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 09:13:06 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 09:13:08 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 09:13:08 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 09:13:08 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 09:13:08 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 09:13:08 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2697 ms
+2025-09-04 09:13:09 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-09-04 09:13:09 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-09-04 09:13:10 [main] INFO  com.healthcare.MinimalApp - Started MinimalApp in 5.24 seconds (process running for 6.287)
+2025-09-04 09:14:58 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04 09:14:58 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-04 09:14:58 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 11 ms
+2025-09-04 10:15:06 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 50337 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 10:15:06 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 10:15:06 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 10:15:10 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 10:15:10 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 10:15:10 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 10:15:10 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 10:15:10 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3799 ms
+2025-09-04 10:15:10 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.healthcare.repository.ConsentRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-09-04 10:15:10 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-09-04 10:15:10 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-09-03 14:26:18 [main] ERROR o.s.boot.SpringApplication - Application run failed
-org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.GenericJDBCException: Unable to open JDBC Connection for DDL execution [FATAL: role "healthcare_user" does not exist] [n/a]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1768)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:596)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:518)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326)
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
-	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:942)
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:615)
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:739)
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:441)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:325)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1327)
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1316)
-	at com.healthcare.SimpleQRApp.main(SimpleQRApp.java:14)
-Caused by: jakarta.persistence.PersistenceException: [PersistenceUnit: default] Unable to build Hibernate SessionFactory; nested exception is org.hibernate.exception.GenericJDBCException: Unable to open JDBC Connection for DDL execution [FATAL: role "healthcare_user" does not exist] [n/a]
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:421)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:354)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1815)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1764)
-	... 16 common frames omitted
-Caused by: org.hibernate.exception.GenericJDBCException: Unable to open JDBC Connection for DDL execution [FATAL: role "healthcare_user" does not exist] [n/a]
-	at org.hibernate.exception.internal.StandardSQLExceptionConverter.convert(StandardSQLExceptionConverter.java:61)
-	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:108)
-	at org.hibernate.engine.jdbc.spi.SqlExceptionHelper.convert(SqlExceptionHelper.java:94)
-	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:74)
-	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:39)
-	at org.hibernate.tool.schema.internal.exec.ImprovedExtractionContextImpl.getJdbcConnection(ImprovedExtractionContextImpl.java:63)
-	at org.hibernate.tool.schema.extract.spi.ExtractionContext.getQueryResults(ExtractionContext.java:43)
-	at org.hibernate.tool.schema.extract.internal.SequenceInformationExtractorLegacyImpl.extractMetadata(SequenceInformationExtractorLegacyImpl.java:39)
-	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.initializeSequences(DatabaseInformationImpl.java:66)
-	at org.hibernate.tool.schema.extract.internal.DatabaseInformationImpl.<init>(DatabaseInformationImpl.java:60)
-	at org.hibernate.tool.schema.internal.Helper.buildDatabaseInformation(Helper.java:185)
-	at org.hibernate.tool.schema.internal.AbstractSchemaMigrator.doMigration(AbstractSchemaMigrator.java:98)
-	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.performDatabaseAction(SchemaManagementToolCoordinator.java:284)
-	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.lambda$process$5(SchemaManagementToolCoordinator.java:143)
-	at java.base/java.util.HashMap.forEach(HashMap.java:1421)
-	at org.hibernate.tool.schema.spi.SchemaManagementToolCoordinator.process(SchemaManagementToolCoordinator.java:140)
-	at org.hibernate.boot.internal.SessionFactoryObserverForSchemaExport.sessionFactoryCreated(SessionFactoryObserverForSchemaExport.java:37)
-	at org.hibernate.internal.SessionFactoryObserverChain.sessionFactoryCreated(SessionFactoryObserverChain.java:35)
-	at org.hibernate.internal.SessionFactoryImpl.<init>(SessionFactoryImpl.java:293)
-	at org.hibernate.boot.internal.SessionFactoryBuilderImpl.build(SessionFactoryBuilderImpl.java:444)
-	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1458)
-	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75)
-	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:378)
-	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409)
-	... 20 common frames omitted
-Caused by: org.postgresql.util.PSQLException: FATAL: role "healthcare_user" does not exist
-	at org.postgresql.core.v3.QueryExecutorImpl.receiveErrorResponse(QueryExecutorImpl.java:2713)
-	at org.postgresql.core.v3.QueryExecutorImpl.readStartupMessages(QueryExecutorImpl.java:2825)
-	at org.postgresql.core.v3.QueryExecutorImpl.<init>(QueryExecutorImpl.java:175)
-	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:313)
-	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
-	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
-	at org.postgresql.Driver.makeConnection(Driver.java:443)
-	at org.postgresql.Driver.connect(Driver.java:297)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470)
-	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
-	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100)
-	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
-	at org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl.getConnection(DatasourceConnectionProviderImpl.java:122)
-	at org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator$ConnectionProviderJdbcConnectionAccess.obtainConnection(JdbcEnvironmentInitiator.java:437)
-	at org.hibernate.resource.transaction.backend.jdbc.internal.DdlTransactionIsolatorNonJtaImpl.getIsolatedConnection(DdlTransactionIsolatorNonJtaImpl.java:46)
-	... 40 common frames omitted
-2025-09-03 14:27:20 [main] INFO  com.healthcare.SimpleQRApp - Starting SimpleQRApp using Java 17.0.9 with PID 18347 (/Users/pereozogu/healthcare-qr-sharing/target/classes started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
-2025-09-03 14:27:20 [main] DEBUG com.healthcare.SimpleQRApp - Running with Spring Boot v3.1.12, Spring v6.0.21
-2025-09-03 14:27:20 [main] INFO  com.healthcare.SimpleQRApp - No active profile set, falling back to 1 default profile: "default"
-2025-09-03 14:27:21 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-09-03 14:27:21 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 72 ms. Found 3 JPA repository interfaces.
-2025-09-03 14:27:22 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8081 (http)
-2025-09-03 14:27:22 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-09-03 14:27:22 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
-2025-09-03 14:27:22 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-09-03 14:27:22 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2054 ms
-2025-09-03 14:27:22 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in file [/Users/pereozogu/healthcare-qr-sharing/target/classes/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in file [/Users/pereozogu/healthcare-qr-sharing/target/classes/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentRepository' defined in com.healthcare.repository.ConsentRepository defined in @EnableJpaRepositories declared on HealthcareQRSharingApplication: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
-2025-09-03 14:27:22 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
-2025-09-03 14:27:23 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-09-03 14:27:23 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Parameter 0 of constructor in com.healthcare.service.ConsentService required a bean named 'entityManagerFactory' that could not be found.
-
-
-Action:
-
-Consider defining a bean named 'entityManagerFactory' in your configuration.
-
-2025-09-03 14:28:24 [main] INFO  com.healthcare.SimpleQRApp - Starting SimpleQRApp using Java 17.0.9 with PID 19189 (/Users/pereozogu/healthcare-qr-sharing/target/classes started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
-2025-09-03 14:28:24 [main] DEBUG com.healthcare.SimpleQRApp - Running with Spring Boot v3.1.12, Spring v6.0.21
-2025-09-03 14:28:24 [main] INFO  com.healthcare.SimpleQRApp - No active profile set, falling back to 1 default profile: "default"
-2025-09-03 14:28:25 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-09-03 14:28:25 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 120 ms. Found 3 JPA repository interfaces.
-2025-09-03 14:28:26 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8081 (http)
-2025-09-03 14:28:26 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-09-03 14:28:26 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
-2025-09-03 14:28:26 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-09-03 14:28:26 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2004 ms
-2025-09-03 14:28:26 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in file [/Users/pereozogu/healthcare-qr-sharing/target/classes/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in file [/Users/pereozogu/healthcare-qr-sharing/target/classes/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentRepository' defined in com.healthcare.repository.ConsentRepository defined in @EnableJpaRepositories declared on HealthcareQRSharingApplication: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
-2025-09-03 14:28:26 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
-2025-09-03 14:28:26 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-09-03 14:28:26 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
-
-***************************
-APPLICATION FAILED TO START
-***************************
-
-Description:
-
-Parameter 0 of constructor in com.healthcare.service.ConsentService required a bean named 'entityManagerFactory' that could not be found.
-
-
-Action:
-
-Consider defining a bean named 'entityManagerFactory' in your configuration.
-
-2025-09-03 16:51:36 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 34417 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
-2025-09-03 16:51:36 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
-2025-09-03 16:51:36 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
-2025-09-03 16:51:39 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-2025-09-03 16:51:39 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-09-03 16:51:39 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
-2025-09-03 16:51:39 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-09-03 16:51:39 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3060 ms
-2025-09-03 16:51:39 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.healthcare.repository.ConsentRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2025-09-03 16:51:39 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
-2025-09-03 16:51:39 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
-
-Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-09-03 16:51:39 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+2025-09-04 10:15:10 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
 
 ***************************
 APPLICATION FAILED TO START
@@ -389,21 +40,20 @@ Action:
 
 Consider defining a bean of type 'com.healthcare.repository.ConsentRepository' in your configuration.
 
-2025-09-03 16:52:58 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 35801 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
-2025-09-03 16:52:58 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
-2025-09-03 16:52:58 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
-2025-09-03 16:53:01 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-2025-09-03 16:53:01 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-09-03 16:53:01 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
-2025-09-03 16:53:01 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-09-03 16:53:01 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2818 ms
-2025-09-03 16:53:02 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2025-09-03 16:53:02 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'jwtSecurityFilterChain' defined in class path resource [org/springframework/boot/autoconfigure/security/oauth2/resource/servlet/OAuth2ResourceServerJwtConfiguration$OAuth2SecurityFilterChainConfiguration.class]: Unsatisfied dependency expressed through method 'jwtSecurityFilterChain' parameter 0: No qualifying bean of type 'org.springframework.security.config.annotation.web.builders.HttpSecurity' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
-2025-09-03 16:53:02 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
-2025-09-03 16:53:02 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+2025-09-04 10:21:31 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 55575 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 10:21:31 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 10:21:31 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 10:21:35 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 10:21:35 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 10:21:35 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 10:21:35 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 10:21:35 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3670 ms
+2025-09-04 10:21:35 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.healthcare.repository.ConsentRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-09-04 10:21:35 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-09-04 10:21:35 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
-2025-09-03 16:53:02 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+2025-09-04 10:21:35 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
 
 ***************************
 APPLICATION FAILED TO START
@@ -411,24 +61,192 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of method jwtSecurityFilterChain in org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerJwtConfiguration$OAuth2SecurityFilterChainConfiguration required a bean of type 'org.springframework.security.config.annotation.web.builders.HttpSecurity' that could not be found.
+Parameter 0 of constructor in com.healthcare.service.ConsentService required a bean of type 'com.healthcare.repository.ConsentRepository' that could not be found.
 
 
 Action:
 
-Consider defining a bean of type 'org.springframework.security.config.annotation.web.builders.HttpSecurity' in your configuration.
+Consider defining a bean of type 'com.healthcare.repository.ConsentRepository' in your configuration.
 
-2025-09-03 16:56:18 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 38601 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
-2025-09-03 16:56:18 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
-2025-09-03 16:56:18 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
-2025-09-03 16:56:21 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-2025-09-03 16:56:21 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2025-09-03 16:56:21 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
-2025-09-03 16:56:21 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2025-09-03 16:56:21 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2683 ms
-2025-09-03 16:56:21 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
-2025-09-03 16:56:22 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-2025-09-03 16:56:22 [main] INFO  com.healthcare.MinimalApp - Started MinimalApp in 5.161 seconds (process running for 6.183)
-2025-09-03 17:01:29 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-09-03 17:01:29 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2025-09-03 17:01:29 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 5 ms
+2025-09-04 10:23:24 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 57374 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 10:23:24 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 10:23:24 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 10:23:28 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 10:23:28 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 10:23:28 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 10:23:28 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 10:23:28 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3776 ms
+2025-09-04 10:23:28 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.healthcare.repository.ConsentRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-09-04 10:23:28 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-09-04 10:23:28 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-09-04 10:23:28 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.healthcare.service.ConsentService required a bean of type 'com.healthcare.repository.ConsentRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.healthcare.repository.ConsentRepository' in your configuration.
+
+2025-09-04 10:25:29 [main] INFO  com.healthcare.SimpleApp - Starting SimpleApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 59563 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 10:25:29 [main] DEBUG com.healthcare.SimpleApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 10:25:29 [main] INFO  com.healthcare.SimpleApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 10:25:33 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 10:25:33 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 10:25:33 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 10:25:33 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 10:25:33 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3239 ms
+2025-09-04 10:25:33 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'consentController' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/controller/ConsentController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'consentService' defined in URL [jar:file:/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar!/BOOT-INF/classes!/com/healthcare/service/ConsentService.class]: Unsatisfied dependency expressed through constructor parameter 0: No qualifying bean of type 'com.healthcare.repository.ConsentRepository' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {}
+2025-09-04 10:25:33 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2025-09-04 10:25:33 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-09-04 10:25:33 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.healthcare.service.ConsentService required a bean of type 'com.healthcare.repository.ConsentRepository' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.healthcare.repository.ConsentRepository' in your configuration.
+
+2025-09-04 10:51:03 [main] INFO  com.healthcare.SimpleApp - Starting SimpleApp v1.1.0-SNAPSHOT using Java 17.0.9 with PID 79593 (/Users/pereozogu/healthcare-qr-sharing/target/healthcare-qr-sharing-1.1.0-SNAPSHOT.jar started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 10:51:03 [main] DEBUG com.healthcare.SimpleApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 10:51:03 [main] INFO  com.healthcare.SimpleApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 10:51:06 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 10:51:06 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 10:51:06 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 10:51:06 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 10:51:06 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2928 ms
+2025-09-04 10:51:06 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-09-04 10:51:07 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@3c0fae6c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4c168660, org.springframework.security.web.context.SecurityContextHolderFilter@eb6449b, org.springframework.security.web.header.HeaderWriterFilter@545de5a4, org.springframework.web.filter.CorsFilter@52b56a3e, org.springframework.security.web.authentication.logout.LogoutFilter@1536602f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@180e6ac4, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7e985ce9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@fd0e5b6, org.springframework.security.web.session.SessionManagementFilter@61526469, org.springframework.security.web.access.ExceptionTranslationFilter@21005f6c, org.springframework.security.web.access.intercept.AuthorizationFilter@2c1b9e4b]
+2025-09-04 10:51:07 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-09-04 10:51:07 [main] INFO  com.healthcare.SimpleApp - Started SimpleApp in 5.959 seconds (process running for 6.966)
+2025-09-04 11:12:54 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04 11:12:54 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-04 11:12:54 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 17 ms
+2025-09-04 11:12:55 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /
+2025-09-04 11:12:55 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:12:55 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /
+2025-09-04 11:12:55 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /js/app.js
+2025-09-04 11:12:55 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /css/custom.css
+2025-09-04 11:12:55 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:12:55 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:12:55 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /js/app.js
+2025-09-04 11:12:55 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /css/custom.css
+2025-09-04 11:12:55 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 11:12:55 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 11:12:55 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:10 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/qr/generate
+2025-09-04 11:13:10 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:10 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/qr/generate
+2025-09-04 11:13:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /css/custom.css
+2025-09-04 11:13:18 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 11:13:18 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:18 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /css/custom.css
+2025-09-04 11:13:18 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 11:13:18 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 11:13:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 11:13:18 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 11:13:18 [http-nio-8080-exec-6] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 11:13:18 [http-nio-8080-exec-6] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:18 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:27 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Securing DELETE /api/qr/session/session-1756998790374
+2025-09-04 11:13:27 [http-nio-8080-exec-7] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:13:27 [http-nio-8080-exec-7] DEBUG o.s.security.web.FilterChainProxy - Secured DELETE /api/qr/session/session-1756998790374
+2025-09-04 11:20:59 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/qr/generate
+2025-09-04 11:20:59 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 11:20:59 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/qr/generate
+2025-09-04 12:12:34 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /
+2025-09-04 12:12:34 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:34 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /
+2025-09-04 12:12:34 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /js/app.js
+2025-09-04 12:12:34 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /css/custom.css
+2025-09-04 12:12:34 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:34 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /js/app.js
+2025-09-04 12:12:34 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:34 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /css/custom.css
+2025-09-04 12:12:34 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 12:12:34 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:34 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 12:12:34 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 12:12:34 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 12:12:34 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:34 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 12:12:34 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 12:12:34 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:50 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/qr/generate
+2025-09-04 12:12:50 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:12:50 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/qr/generate
+2025-09-04 12:14:56 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Securing GET /
+2025-09-04 12:14:56 [http-nio-8080-exec-8] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:14:56 [http-nio-8080-exec-8] DEBUG o.s.security.web.FilterChainProxy - Secured GET /
+2025-09-04 12:14:56 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Securing GET /js/app.js
+2025-09-04 12:14:56 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 12:14:56 [http-nio-8080-exec-10] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:14:56 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:14:56 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /css/custom.css
+2025-09-04 12:14:56 [http-nio-8080-exec-10] DEBUG o.s.security.web.FilterChainProxy - Secured GET /js/app.js
+2025-09-04 12:14:56 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 12:14:56 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:14:56 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /css/custom.css
+2025-09-04 12:14:56 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 12:14:56 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 12:14:56 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 12:14:56 [http-nio-8080-exec-9] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 12:14:56 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:14:56 [http-nio-8080-exec-9] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:15:23 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/qr/generate
+2025-09-04 12:15:23 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:15:23 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/qr/generate
+2025-09-04 12:45:09 [main] INFO  com.healthcare.MinimalApp - Starting MinimalApp using Java 17.0.9 with PID 71018 (/Users/pereozogu/healthcare-qr-sharing/target/classes started by pereozogu in /Users/pereozogu/healthcare-qr-sharing)
+2025-09-04 12:45:09 [main] DEBUG com.healthcare.MinimalApp - Running with Spring Boot v3.1.12, Spring v6.0.21
+2025-09-04 12:45:09 [main] INFO  com.healthcare.MinimalApp - No active profile set, falling back to 1 default profile: "default"
+2025-09-04 12:45:10 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-09-04 12:45:10 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-04 12:45:10 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-09-04 12:45:10 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-04 12:45:10 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 968 ms
+2025-09-04 12:45:11 [main] INFO  o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page template: index
+2025-09-04 12:45:11 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@10e5bf9c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@68c9e023, org.springframework.security.web.context.SecurityContextHolderFilter@220c9a63, org.springframework.security.web.header.HeaderWriterFilter@62cba181, org.springframework.web.filter.CorsFilter@1624775, org.springframework.security.web.authentication.logout.LogoutFilter@9ab310b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@40bb4f87, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@7645f03e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@1e7f19b4, org.springframework.security.web.session.SessionManagementFilter@66223d94, org.springframework.security.web.access.ExceptionTranslationFilter@6f825516, org.springframework.security.web.access.intercept.AuthorizationFilter@161dd92a]
+2025-09-04 12:45:11 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+2025-09-04 12:45:11 [main] INFO  com.healthcare.MinimalApp - Started MinimalApp in 1.827 seconds (process running for 2.17)
+2025-09-04 12:45:59 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-04 12:45:59 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-04 12:45:59 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-09-04 12:46:00 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /
+2025-09-04 12:46:00 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:00 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /
+2025-09-04 12:46:00 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Securing GET /js/app.js
+2025-09-04 12:46:00 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /css/custom.css
+2025-09-04 12:46:00 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 12:46:00 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:00 [http-nio-8080-exec-3] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:00 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:00 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /.well-known/appspecific/com.chrome.devtools.json
+2025-09-04 12:46:00 [http-nio-8080-exec-3] DEBUG o.s.security.web.FilterChainProxy - Secured GET /js/app.js
+2025-09-04 12:46:00 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /css/custom.css
+2025-09-04 12:46:00 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 12:46:00 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error
+2025-09-04 12:46:00 [http-nio-8080-exec-2] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 12:46:00 [http-nio-8080-exec-4] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error
+2025-09-04 12:46:00 [http-nio-8080-exec-4] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:00 [http-nio-8080-exec-2] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:17 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Securing POST /api/qr/generate
+2025-09-04 12:46:17 [http-nio-8080-exec-5] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-09-04 12:46:17 [http-nio-8080-exec-5] DEBUG o.s.security.web.FilterChainProxy - Secured POST /api/qr/generate

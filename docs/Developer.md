@@ -124,6 +124,7 @@ curl -X POST http://localhost:8080/api/patients \
 mvn clean package -DskipTests && docker compose down && docker compose up -d
 mvn clean package -DskipTests && docker compose restart app
 docker compose down && mvn clean package -DskipTests && docker compose up -d
+pkill -f java
 ```
 
 # update the pom.xml with the new version

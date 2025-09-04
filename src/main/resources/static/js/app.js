@@ -45,11 +45,14 @@ function displayQRCode(result) {
     const qrResult = document.getElementById('qrResult');
     const qrImage = document.getElementById('qrImage');
     const expirationTime = document.getElementById('expirationTime');
+    const generateBtn = document.querySelector('button[type="submit"]');
     
     qrImage.src = 'data:image/png;base64,' + result.qrCodeImage;
     expirationTime.textContent = result.expiresAt || new Date(Date.now() + 15*60*1000).toLocaleString();
     
     qrResult.style.display = 'block';
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'QR Code Generated';
     
     // Set up cancel button
     document.getElementById('cancelSession').onclick = () => cancelSession(result.sessionId);
@@ -65,6 +68,9 @@ async function cancelSession(sessionId) {
         });
         
         document.getElementById('qrResult').style.display = 'none';
+        const generateBtn = document.querySelector('button[type="submit"]');
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate QR Code';
         alert('QR session cancelled');
     } catch (error) {
         alert('Error cancelling session: ' + error.message);
