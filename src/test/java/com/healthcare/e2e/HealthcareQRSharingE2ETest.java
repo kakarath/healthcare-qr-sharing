@@ -1,6 +1,6 @@
 package com.healthcare.e2e;
 
-import com.healthcare.HealthcareQRSharingApplication;
+import com.healthcare.MinimalApp;
 import com.healthcare.dto.QRShareRequest;
 import com.healthcare.model.ConsentRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +20,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(
-    classes = HealthcareQRSharingApplication.class,
+    classes = MinimalApp.class,
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @Testcontainers
