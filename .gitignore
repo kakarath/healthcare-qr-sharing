@@ -14,6 +14,10 @@ dist*
 
 target/
 *.log
+*.out
+logs/
+log/
+*.log.*
 .DS_Store
 
 /.vscode
@@ -23,6 +27,3 @@ target/
 # IntelliJ
 .idea/
 web-pricer.iml
-
-
-*.log
