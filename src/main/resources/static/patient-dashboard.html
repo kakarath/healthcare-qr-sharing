@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <span class="navbar-brand">Patient Dashboard</span>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3" id="welcomeText"></span>
+                <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Consent Requests</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="consentRequests">
+                            <p class="text-muted">No pending consent requests</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="checkConsentRequests()">Refresh Requests</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Generated QR Code</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="qrCodeDisplay" class="text-center">
+                            <p class="text-muted">No QR code generated yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = localStorage.getItem('sessionId');
+        let user = JSON.parse(localStorage.getItem('user'));
+
+        if (!sessionId || !user || user.role !== 'PATIENT') {
+            window.location.href = '/login.html';
+        }
+
+        document.getElementById('welcomeText').textContent = `Welcome, ${user.firstName} ${user.lastName}`;
+
+        async function checkConsentRequests() {
+            try {
+                const response = await fetch('/api/consent/pending', {
+                    headers: {
+                        'Authorization': 'Bearer ' + sessionId
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.requests.length > 0) {
+                    displayConsentRequests(data.requests);
+                } else {
+                    document.getElementById('consentRequests').innerHTML = 
+                        '<p class="text-muted">No pending consent requests</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching consent requests:', error);
+            }
+        }
+
+        function displayConsentRequests(requests) {
+            const container = document.getElementById('consentRequests');
+            container.innerHTML = '';
+            
+            requests.forEach(request => {
+                const requestDiv = document.createElement('div');
+                requestDiv.className = 'border p-3 mb-3 rounded';
+                requestDiv.innerHTML = `
+                    <h6>Request from: ${request.providerName}</h6>
+                    <p><strong>Purpose:</strong> ${request.purpose}</p>
+                    <p><strong>Requested:</strong> ${new Date(request.requestTime).toLocaleString()}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success btn-sm" onclick="approveConsent('${request.id}')">Approve</button>
+                        <button class="btn btn-danger btn-sm" onclick="denyConsent('${request.id}')">Deny</button>
+                    </div>
+                `;
+                container.appendChild(requestDiv);
+            });
+        }
+
+        async function approveConsent(consentId) {
+            try {
+                const response = await fetch(`/api/consent/${consentId}/approve`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + sessionId
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayQRCode(data.qrCodeImage);
+                    checkConsentRequests(); // Refresh the list
+                    alert('Consent approved! QR code generated.');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error approving consent: ' + error.message);
+            }
+        }
+
+        async function denyConsent(consentId) {
+            try {
+                const response = await fetch(`/api/consent/${consentId}/deny`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + sessionId
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    checkConsentRequests(); // Refresh the list
+                    alert('Consent denied.');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error denying consent: ' + error.message);
+            }
+        }
+
+        function displayQRCode(base64Image) {
+            document.getElementById('qrCodeDisplay').innerHTML = `
+                <img src="data:image/png;base64,${base64Image}" alt="QR Code" class="img-fluid">
+                <p class="mt-2">Show this QR code to your provider</p>
+            `;
+        }
+
+        function logout() {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + sessionId
+                }
+            }).finally(() => {
+                localStorage.removeItem('sessionId');
+                localStorage.removeItem('user');
+                window.location.href = '/login.html';
+            });
+        }
+
+        // Check for consent requests on page load
+        checkConsentRequests();
+    </script>
+</body>
+</html>

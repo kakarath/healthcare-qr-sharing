@@ -1,52 +1,58 @@
 // QR Code Generation
-document.getElementById('qrForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const dataTypes = formData.getAll('dataTypes');
-    
-    if (dataTypes.length === 0) {
-        alert('Please select at least one data type to share');
-        return;
-    }
-    
-    const request = {
-        dataTypes: dataTypes,
-        expirationMinutes: parseInt(formData.get('expirationMinutes')),
-        purpose: formData.get('purpose')
-    };
-    
-    try {
-        const response = await fetch('/api/qr/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + getAuthToken()
-            },
-            body: JSON.stringify(request)
-        });
+if (document.getElementById('qrForm')) {
+    document.getElementById('qrForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        if (response.ok) {
-            const result = await response.json();
-            displayQRCode(result);
-        } else {
-            const error = await response.json();
+        const formData = new FormData(e.target);
+        const dataTypes = formData.getAll('dataTypes');
+        
+        if (dataTypes.length === 0) {
+            alert('Please select at least one data type to share');
+            return;
+        }
+        
+        const request = {
+            dataTypes: dataTypes,
+            expirationMinutes: parseInt(formData.get('expirationMinutes')),
+            purpose: formData.get('purpose')
+        };
+        
+        try {
+            const response = await fetch('/api/qr/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                console.log('QR Response:', result);
+                displayQRCode(result);
+            } else {
+                const errorText = await response.text();
+                console.error('QR Error:', errorText);
+                alert('Error: ' + response.status + ' - ' + errorText);
+            }
+        } catch (error) {
             alert('Error: ' + error.message);
         }
-    } catch (error) {
-        alert('Network error: ' + error.message);
-    }
-});
+    });
+}
 
 function displayQRCode(result) {
     const qrResult = document.getElementById('qrResult');
     const qrImage = document.getElementById('qrImage');
     const expirationTime = document.getElementById('expirationTime');
+    const generateBtn = document.querySelector('button[type="submit"]');
     
-    qrImage.src = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(result.qrCodeImage)));
-    expirationTime.textContent = new Date(result.expiresAt).toLocaleString();
+    qrImage.src = 'data:image/png;base64,' + result.qrCodeImage;
+    expirationTime.textContent = result.expiresAt || new Date(Date.now() + 15*60*1000).toLocaleString();
     
     qrResult.style.display = 'block';
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'QR Code Generated';
     
     // Set up cancel button
     document.getElementById('cancelSession').onclick = () => cancelSession(result.sessionId);
@@ -62,6 +68,9 @@ async function cancelSession(sessionId) {
         });
         
         document.getElementById('qrResult').style.display = 'none';
+        const generateBtn = document.querySelector('button[type="submit"]');
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate QR Code';
         alert('QR session cancelled');
     } catch (error) {
         alert('Error cancelling session: ' + error.message);
@@ -70,34 +79,74 @@ async function cancelSession(sessionId) {
 
 // QR Code Scanning (for providers)
 let qrScanner;
+let isScanning = false;
 
 if (document.getElementById('startScan')) {
-    document.getElementById('startScan').addEventListener('click', startQRScan);
+    const button = document.getElementById('startScan');
+    button.addEventListener('click', function() {
+        if (isScanning) {
+            stopQRScan();
+        } else {
+            startQRScan();
+        }
+    });
+    
+    // Clean up when page unloads
+    window.addEventListener('beforeunload', () => {
+        if (qrScanner) {
+            qrScanner.destroy();
+        }
+    });
 }
 
 async function startQRScan() {
     const video = document.getElementById('qrVideo');
+    const button = document.getElementById('startScan');
     
     try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+        
         qrScanner = new QrScanner(video, result => {
             processQRScan(result.data);
+        }, {
+            returnDetailedScanResult: true,
+            highlightScanRegion: true
         });
         
         await qrScanner.start();
-        document.getElementById('startScan').textContent = 'Stop Camera';
-        document.getElementById('startScan').onclick = stopQRScan;
+        isScanning = true;
+        button.textContent = 'Stop Camera';
+        button.classList.remove('btn-success');
+        button.classList.add('btn-danger');
     } catch (error) {
         alert('Camera error: ' + error.message);
+        isScanning = false;
     }
 }
 
 function stopQRScan() {
+    const button = document.getElementById('startScan');
+    const video = document.getElementById('qrVideo');
+    
     if (qrScanner) {
         qrScanner.stop();
+        qrScanner.destroy();
         qrScanner = null;
     }
-    document.getElementById('startScan').textContent = 'Start Camera';
-    document.getElementById('startScan').onclick = startQRScan;
+    
+    // Stop all video tracks
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => {
+            track.stop();
+        });
+        video.srcObject = null;
+    }
+    
+    isScanning = false;
+    button.textContent = 'Start Camera';
+    button.classList.remove('btn-danger');
+    button.classList.add('btn-success');
 }
 
 async function processQRScan(qrData) {
