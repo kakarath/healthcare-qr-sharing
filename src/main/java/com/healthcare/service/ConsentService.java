@@ -1,57 +1,50 @@
 package com.healthcare.service;
 
-import com.healthcare.dto.ConsentRequest;
-import com.healthcare.model.ConsentRecord;
-import com.healthcare.repository.ConsentRepository;
-import lombok.RequiredArgsConstructor;
+import com.healthcare.model.ConsentRequest;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ConsentService {
-    
-    private final ConsentRepository consentRepository;
-    
-    public ConsentRecord createConsent(String patientId, ConsentRequest request) {
-        ConsentRecord consent = ConsentRecord.builder()
-                .granteeId(request.getGranteeId())
-                .allowedDataTypes(request.getAllowedDataTypes())
-                .status(ConsentRecord.ConsentStatus.ACTIVE)
-                .grantedAt(LocalDateTime.now())
-                .expiresAt(request.getExpiresAt())
-                .purpose(request.getPurpose())
-                .build();
-        
-        return consentRepository.save(consent);
+    private final Map<String, ConsentRequest> consentRequests = new HashMap<>();
+
+    public ConsentRequest createConsentRequest(String patientId, String providerId, String providerName, String purpose) {
+        ConsentRequest request = new ConsentRequest(patientId, providerId, providerName, purpose);
+        consentRequests.put(request.getId(), request);
+        return request;
     }
-    
-    public List<ConsentRecord> getPatientConsents(String patientId) {
-        return consentRepository.findByPatientId(patientId);
+
+    public List<ConsentRequest> getPendingRequestsForPatient(String patientId) {
+        return consentRequests.values().stream()
+                .filter(req -> req.getPatientId().equals(patientId) && 
+                              req.getStatus() == ConsentRequest.ConsentStatus.PENDING)
+                .collect(Collectors.toList());
     }
-    
-    public void revokeConsent(String patientId, String consentId) {
-        ConsentRecord consent = consentRepository.findById(consentId)
-                .orElseThrow(() -> new RuntimeException("Consent not found"));
-        
-        consent.setStatus(ConsentRecord.ConsentStatus.REVOKED);
-        consent.setRevokedAt(LocalDateTime.now());
-        consentRepository.save(consent);
-    }
-    
-    public boolean hasValidConsent(String patientId, List<ConsentRecord.DataType> dataTypes) {
-        var activeConsents = consentRepository.findActiveConsentsByPatientId(patientId, LocalDateTime.now());
-        
-        if (activeConsents.isEmpty()) {
-            return false;
+
+    public ConsentRequest approveConsent(String consentId, String qrCodeId) {
+        ConsentRequest request = consentRequests.get(consentId);
+        if (request != null && request.getStatus() == ConsentRequest.ConsentStatus.PENDING) {
+            request.setStatus(ConsentRequest.ConsentStatus.APPROVED);
+            request.setResponseTime(LocalDateTime.now());
+            request.setQrCodeId(qrCodeId);
         }
-        
-        return dataTypes.stream().allMatch(dataType -> 
-            activeConsents.stream().anyMatch(consent -> 
-                consent.getAllowedDataTypes().contains(dataType)
-            )
-        );
+        return request;
+    }
+
+    public ConsentRequest denyConsent(String consentId) {
+        ConsentRequest request = consentRequests.get(consentId);
+        if (request != null && request.getStatus() == ConsentRequest.ConsentStatus.PENDING) {
+            request.setStatus(ConsentRequest.ConsentStatus.DENIED);
+            request.setResponseTime(LocalDateTime.now());
+        }
+        return request;
+    }
+
+    public ConsentRequest getConsentRequest(String consentId) {
+        return consentRequests.get(consentId);
     }
 }
