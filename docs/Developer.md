@@ -151,3 +151,10 @@ sleep 10 && curl -X POST http://localhost:8080/api/qr/generate \
 ```
 sleep 5 && curl -X POST http://localhost:8080/api/qr/generate
 ```
+
+```
+Main App: http://localhost:8080/
+Status Dashboard: http://localhost:8080/status.html
+Health Check: http://localhost:8080/api/health
+Version Info: http://localhost:8080/api/version
+```
