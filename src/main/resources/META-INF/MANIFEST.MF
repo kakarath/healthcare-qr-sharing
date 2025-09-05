@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Implementation-Title: Healthcare QR Data Sharing System
-Implementation-Version: 2.0.0
+Implementation-Version: 2.1.0
 Implementation-Vendor: Healthcare QR Team
 Build-Date: 2025-01-04
 Git-Commit: ${git.commit.id.abbrev}
@@ -8,5 +8,5 @@ Build-Number: ${build.number}
 Main-Class: com.healthcare.MinimalApp
 Created-By: Maven 3.6+
 Specification-Title: Healthcare QR Sharing API
-Specification-Version: 2.0
+Specification-Version: 2.1
 Specification-Vendor: Healthcare QR Team
