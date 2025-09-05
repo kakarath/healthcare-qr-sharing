@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 
 @Service
 public class AuthService {
@@ -51,6 +52,11 @@ public class AuthService {
     }
 
     public User registerUser(User user) {
+        // Check if user already exists
+        if (users.containsKey(user.getEmail())) {
+            return null; // User already exists
+        }
+        
         user.setId((long) (users.size() + 1));
         if (user.getRole() == User.UserRole.PATIENT) {
             user.setPatientId("patient-" + user.getId());
@@ -59,5 +65,15 @@ public class AuthService {
         }
         users.put(user.getEmail(), user);
         return user;
+    }
+
+    public List<User> searchPatients(String query) {
+        return users.values().stream()
+                .filter(user -> user.getRole() == User.UserRole.PATIENT)
+                .filter(user -> 
+                    user.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
+                    user.getLastName().toLowerCase().contains(query.toLowerCase()) ||
+                    user.getEmail().toLowerCase().contains(query.toLowerCase()))
+                .collect(java.util.stream.Collectors.toList());
     }
 }

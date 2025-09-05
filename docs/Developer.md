@@ -125,6 +125,19 @@ mvn clean package -DskipTests && docker compose down && docker compose up -d
 mvn clean package -DskipTests && docker compose restart app
 docker compose down && mvn clean package -DskipTests && docker compose up -d
 pkill -f java
+
+pkill -f java && mvn clean compile && mvn spring-boot:run -Dspring-boot.run.main-class=com.healthcare.MinimalApp && docker compose down && docker compose up -d
+```
+
+see --> Error response from daemon: ports are not available: exposing port TCP 0.0.0.0:8080 -> 127.0.0.1:0: listen tcp 0.0.0.0:8080: bind: address already in use
+
+lsof -ti:8080 | xargs kill -9
+lsof -i:8080
+mvn spring-boot:run -Dspring-boot.run.main-class=com.healthcare.MinimalApp
+docker compose up -d
+
+
+lsof -ti:8080 | xargs kill -9 && sleep 2 && mvn spring-boot:run -Dspring-boot.run.main-class=com.healthcare.MinimalApp && sleep 5 && docker compose down && docker compose up -d
 ```
 
 # update the pom.xml with the new version

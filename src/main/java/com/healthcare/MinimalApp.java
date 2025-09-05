@@ -12,6 +12,8 @@ import com.healthcare.service.AuthService;
 import com.healthcare.service.ConsentService;
 import com.healthcare.service.AppInfoService;
 import com.healthcare.service.NotificationService;
+import com.healthcare.service.PatientDataService;
+import com.healthcare.model.PatientData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +47,9 @@ public class MinimalApp {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private PatientDataService patientDataService;
+
     public static void main(String[] args) {
         SpringApplication.run(MinimalApp.class, args);
     }
@@ -75,6 +80,30 @@ public class MinimalApp {
         authService.logout(sessionId.replace("Bearer ", ""));
         response.put(SUCCESS, true);
         response.put("message", "Logged out successfully");
+        return response;
+    }
+
+    @PostMapping("/api/auth/register")
+    public Map<String, Object> register(@RequestBody Map<String, String> userData) {
+        Map<String, Object> response = new HashMap<>();
+        
+        User newUser = new User(
+            userData.get("email"),
+            userData.get("password"),
+            userData.get("firstName"),
+            userData.get("lastName"),
+            User.UserRole.valueOf(userData.get("role"))
+        );
+        
+        User registeredUser = authService.registerUser(newUser);
+        if (registeredUser != null) {
+            response.put(SUCCESS, true);
+            response.put("user", registeredUser);
+            response.put("message", "Registration successful");
+        } else {
+            response.put(SUCCESS, false);
+            response.put("message", "User already exists");
+        }
         return response;
     }
 
@@ -127,8 +156,7 @@ public class MinimalApp {
         if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
             try {
                 String qrCodeId = "qr-" + System.currentTimeMillis();
-                String patientData = "Patient: " + patient.get().getFirstName() + " " + patient.get().getLastName() + 
-                                  ", ID: " + patient.get().getPatientId() + ", Consent: " + consentId;
+                String patientData = patientDataService.generateQRData(patient.get().getPatientId());
                 String base64QrCode = QRCodeGenerator.generateQRCodeBase64(patientData, 200, 200);
                 
                 ConsentRequest approvedRequest = consentService.approveConsent(consentId, qrCodeId);
@@ -222,6 +250,138 @@ public class MinimalApp {
         
         response.put(SUCCESS, true);
         response.put("message", "Maintenance notification sent");
+        return response;
+    }
+
+    @GetMapping("/api/patients/search")
+    public Map<String, Object> searchPatients(@RequestHeader("Authorization") String sessionId,
+                                             @RequestParam String query) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
+        
+        if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
+            List<User> patients = authService.searchPatients(query);
+            response.put(SUCCESS, true);
+            response.put("patients", patients);
+        } else {
+            response.put(SUCCESS, false);
+            response.put("message", "Unauthorized");
+        }
+        return response;
+    }
+
+    @GetMapping("/api/patients/data")
+    public Map<String, Object> getPatientData(@RequestHeader("Authorization") String sessionId) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
+        
+        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
+            Optional<PatientData> patientData = patientDataService.getPatientData(patient.get().getPatientId());
+            if (patientData.isPresent()) {
+                response.put(SUCCESS, true);
+                response.put("data", patientData.get());
+            } else {
+                response.put(SUCCESS, false);
+                response.put("message", "No patient data found");
+            }
+        } else {
+            response.put(SUCCESS, false);
+            response.put("message", "Unauthorized");
+        }
+        return response;
+    }
+
+    @PostMapping("/api/patients/data")
+    public Map<String, Object> updatePatientData(@RequestHeader("Authorization") String sessionId,
+                                                @RequestBody PatientData patientData) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
+        
+        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
+            PatientData updatedData = patientDataService.updatePatientData(patient.get().getPatientId(), patientData);
+            response.put(SUCCESS, true);
+            response.put("data", updatedData);
+            response.put("message", "Patient data updated successfully");
+        } else {
+            response.put(SUCCESS, false);
+            response.put("message", "Unauthorized");
+        }
+        return response;
+    }
+
+    @PostMapping("/api/qr/generate")
+    public Map<String, Object> generateQR() {
+        Map<String, Object> response = new HashMap<>();
+        String sessionId = "session-" + System.currentTimeMillis();
+        
+        try {
+            String qrContent = "Session ID: " + sessionId;
+            String base64QrCode = QRCodeGenerator.generateQRCodeBase64(qrContent, 200, 200);
+
+            response.put("sessionId", sessionId);
+            response.put("qrCodeImage", base64QrCode);
+            response.put("expiresAt", "2025-09-04T13:00:00");
+            response.put(SUCCESS, true);
+            response.put("message", "QR Generated Successfully!");
+        } catch (Exception e) {
+            response.put(SUCCESS, false);
+            response.put("message", "Failed to generate QR code: " + e.getMessage());
+        }
+
+        return response;
+    }
+
+    @PostMapping("/api/patients/qr/generate")
+    public Map<String, Object> generatePatientQR(@RequestHeader("Authorization") String sessionId) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
+        
+        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
+            try {
+                String qrCodeId = "qr-" + System.currentTimeMillis();
+                String patientData = patientDataService.generateQRData(patient.get().getPatientId());
+                String base64QrCode = QRCodeGenerator.generateQRCodeBase64(patientData, 200, 200);
+                
+                response.put(SUCCESS, true);
+                response.put("qrCodeId", qrCodeId);
+                response.put("qrCodeImage", base64QrCode);
+                response.put("message", "QR code generated successfully");
+            } catch (Exception e) {
+                response.put(SUCCESS, false);
+                response.put("message", "Failed to generate QR code: " + e.getMessage());
+            }
+        } else {
+            response.put(SUCCESS, false);
+            response.put("message", "Unauthorized");
+        }
+        return response;
+    }
+
+    @DeleteMapping("/api/qr/session/{sessionId}")
+    public Map<String, Object> cancelSession(@PathVariable String sessionId) {
+        Map<String, Object> response = new HashMap<>();
+        response.put(SUCCESS, true);
+        response.put("message", "Session cancelled");
+        return response;
+    }
+
+    @PostMapping("/api/qr/scan")
+    public Map<String, Object> scanQRCode(@RequestHeader("Authorization") String sessionId,
+                                         @RequestBody Map<String, String> qrData) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
+        
+        if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
+            String scannedData = qrData.get("qrData");
+            response.put(SUCCESS, true);
+            response.put("scannedData", scannedData);
+            response.put("scannedBy", provider.get().getFirstName() + " " + provider.get().getLastName());
+            response.put("scannedAt", java.time.LocalDateTime.now());
+            response.put("message", "QR code scanned successfully");
+        } else {
+            response.put(SUCCESS, false);
+            response.put("message", "Unauthorized");
+        }
         return response;
     }
 

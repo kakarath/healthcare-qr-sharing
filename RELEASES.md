@@ -1,5 +1,51 @@
 # Healthcare QR Data Sharing - Release Notes
 
+## Version 2.1.0 (2025-01-04) 🚀
+
+### Enhanced Patient-Provider Workflow
+
+#### 🆕 **New Features**
+- **User Registration**: New users can sign up as patients or providers
+- **Patient Data Management**: Patients can add/edit medical information
+- **Patient Search**: Providers can search for patients by name or email
+- **Enhanced QR Codes**: QR codes now contain structured medical data
+- **Medical Data Storage**: Comprehensive patient data including allergies, medications, conditions
+
+#### 🏥 **Patient Features**
+- Personal medical data management (DOB, blood type, allergies, medications)
+- Generate QR codes with complete medical information
+- Edit and update medical records
+- Emergency contact information
+
+#### 👩‍⚕️ **Provider Features**
+- Search patients by name or email
+- Enhanced QR code scanning with medical data parsing
+- Structured display of patient medical information
+- Request access to specific patients
+
+#### 🔧 **Technical Improvements**
+- PatientData model for medical information storage
+- PatientDataService for data management
+- Enhanced QR data format with medical information
+- Registration system with role-based signup
+- Patient search functionality
+
+#### 🌐 **New API Endpoints**
+- `POST /api/auth/register` - User registration
+- `GET /api/patients/search` - Search patients
+- `GET /api/patients/data` - Get patient medical data
+- `POST /api/patients/data` - Update patient medical data
+- `POST /api/qr/scan` - Enhanced QR code scanning
+
+#### 📱 **UI Enhancements**
+- Registration page for new users
+- Patient data management modal
+- Provider patient search interface
+- Enhanced QR code display with medical data
+- Improved dashboard layouts
+
+---
+
 ## Version 2.0.0 (2025-01-04) 🎉
 
 ### Major Release - Complete Patient-Provider Workflow
