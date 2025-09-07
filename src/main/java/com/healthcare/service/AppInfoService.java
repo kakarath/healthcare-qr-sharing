@@ -24,30 +24,33 @@ public class AppInfoService {
     private void loadAppInfo() {
         try {
             // Load from manifest
-            InputStream manifestStream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF");
-            if (manifestStream != null) {
-                Manifest manifest = new Manifest(manifestStream);
-                Attributes attributes = manifest.getMainAttributes();
+            try (InputStream manifestStream = getClass().getResourceAsStream("/META-INF/MANIFEST.MF")) {
+                if (manifestStream != null) {
+                    Manifest manifest = new Manifest(manifestStream);
+                    Attributes attributes = manifest.getMainAttributes();
                 
-                appInfo.put("title", attributes.getValue("Implementation-Title"));
-                appInfo.put("version", attributes.getValue("Implementation-Version"));
-                appInfo.put("vendor", attributes.getValue("Implementation-Vendor"));
-                appInfo.put("buildDate", attributes.getValue("Build-Date"));
-                appInfo.put("gitCommit", attributes.getValue("Git-Commit"));
-                appInfo.put("buildNumber", attributes.getValue("Build-Number"));
-            } else {
-                // Fallback values
-                appInfo.put("title", "Healthcare QR Data Sharing System");
-                appInfo.put("version", "1.1.0");
-                appInfo.put("vendor", "Healthcare QR Team");
-                appInfo.put("buildDate", "2025-01-04");
-                appInfo.put("gitCommit", "dev-build");
-                appInfo.put("buildNumber", "local");
+                    appInfo.put("title", attributes.getValue("Implementation-Title"));
+                    appInfo.put("version", attributes.getValue("Implementation-Version"));
+                    appInfo.put("vendor", attributes.getValue("Implementation-Vendor"));
+                    appInfo.put("buildDate", attributes.getValue("Build-Date"));
+                    appInfo.put("gitCommit", attributes.getValue("Git-Commit"));
+                    appInfo.put("buildNumber", attributes.getValue("Build-Number"));
+                } else {
+                    // Fallback values
+                    appInfo.put("title", "Healthcare QR Data Sharing System");
+                    appInfo.put("version", "2.2.0");
+                    appInfo.put("vendor", "Healthcare QR Team");
+                    appInfo.put("buildDate", "2025-01-07");
+                    appInfo.put("gitCommit", "dev-build");
+                    appInfo.put("buildNumber", "local");
+                }
             }
         } catch (IOException e) {
-            // Set default values on error
+            // Log the error and set default values
+            java.util.logging.Logger.getLogger(AppInfoService.class.getName())
+                .warning("Failed to load manifest file, using default values");
             appInfo.put("title", "Healthcare QR Data Sharing System");
-            appInfo.put("version", "1.1.0-SNAPSHOT");
+            appInfo.put("version", "2.1.0-SNAPSHOT");
             appInfo.put("vendor", "Healthcare QR Team");
             appInfo.put("buildDate", "Unknown");
             appInfo.put("gitCommit", "Unknown");

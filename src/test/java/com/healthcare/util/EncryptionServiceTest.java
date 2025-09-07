@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EncryptionServiceTest {
 
     private EncryptionService encryptionService;
-    private final String testKey = Base64.getEncoder().encodeToString("test-encryption-key-256-bits".getBytes());
+    private final String testKey = Base64.getEncoder().encodeToString("12345678901234567890123456789012".getBytes()); // Exactly 32 bytes
 
     @BeforeEach
     void setUp() {

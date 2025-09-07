@@ -25,7 +25,9 @@ public class NotificationService {
         );
         
         // For now, log the alert (in production, implement actual email sending)
-        logger.severe("APP DOWN ALERT: " + message);
+        // Sanitize reason to prevent log injection
+        String sanitizedReason = reason != null ? reason.replaceAll("[\r\n]", "_") : "Unknown";
+        logger.severe("APP DOWN ALERT - Reason: " + sanitizedReason);
         
         // TODO: Implement actual email sending using JavaMail API
         // sendEmail(adminEmail, subject, message);
@@ -58,7 +60,9 @@ public class NotificationService {
             maintenanceDetails
         );
         
-        logger.info("MAINTENANCE NOTIFICATION: " + message);
+        // Sanitize maintenance details to prevent log injection
+        String sanitizedDetails = maintenanceDetails != null ? maintenanceDetails.replaceAll("[\r\n]", "_") : "No details";
+        logger.info("MAINTENANCE NOTIFICATION - Details: " + sanitizedDetails);
     }
     
     // TODO: Implement actual email sending method

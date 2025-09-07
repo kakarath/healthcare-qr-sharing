@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Implementation-Title: Healthcare QR Data Sharing System
-Implementation-Version: 2.1.0
+Implementation-Version: 2.2.0
 Implementation-Vendor: Healthcare QR Team
 Build-Date: 2025-01-04
 Git-Commit: ${git.commit.id.abbrev}

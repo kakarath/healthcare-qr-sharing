@@ -3,14 +3,14 @@ package com.healthcare.service;
 import com.healthcare.model.ConsentRequest;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class ConsentService {
-    private final Map<String, ConsentRequest> consentRequests = new HashMap<>();
+    private final Map<String, ConsentRequest> consentRequests = new ConcurrentHashMap<>();
 
     public ConsentRequest createConsentRequest(String patientId, String providerId, String providerName, String purpose) {
         ConsentRequest request = new ConsentRequest(patientId, providerId, providerName, purpose);

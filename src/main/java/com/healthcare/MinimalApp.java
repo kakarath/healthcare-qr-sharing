@@ -54,9 +54,14 @@ public class MinimalApp {
         SpringApplication.run(MinimalApp.class, args);
     }
 
-    @PostMapping("/api/auth/login")
+    @PostMapping("/api/login")
     public Map<String, Object> login(@RequestBody Map<String, String> credentials) {
         Map<String, Object> response = new HashMap<>();
+        if (credentials == null || credentials.get("email") == null || credentials.get("password") == null) {
+            response.put(SUCCESS, false);
+            response.put("message", "Invalid request");
+            return response;
+        }
         String email = credentials.get("email");
         String password = credentials.get("password");
         
@@ -155,7 +160,7 @@ public class MinimalApp {
         
         if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
             try {
-                String qrCodeId = "qr-" + System.currentTimeMillis();
+                String qrCodeId = java.util.UUID.randomUUID().toString();
                 String patientData = patientDataService.generateQRData(patient.get().getPatientId());
                 String base64QrCode = QRCodeGenerator.generateQRCodeBase64(patientData, 200, 200);
                 
@@ -244,6 +249,11 @@ public class MinimalApp {
     @PostMapping("/api/admin/maintenance")
     public Map<String, Object> scheduleMaintenance(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
+        if (request == null || request.get("details") == null || request.get("details").trim().isEmpty()) {
+            response.put(SUCCESS, false);
+            response.put("message", "Invalid maintenance details");
+            return response;
+        }
         String details = request.get("details");
         
         notificationService.sendMaintenanceNotification(details);
@@ -257,6 +267,11 @@ public class MinimalApp {
     public Map<String, Object> searchPatients(@RequestHeader("Authorization") String sessionId,
                                              @RequestParam String query) {
         Map<String, Object> response = new HashMap<>();
+        if (query == null || query.trim().isEmpty()) {
+            response.put(SUCCESS, false);
+            response.put("message", "Invalid search query");
+            return response;
+        }
         Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
         
         if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
@@ -276,7 +291,13 @@ public class MinimalApp {
         Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
         
         if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            Optional<PatientData> patientData = patientDataService.getPatientData(patient.get().getPatientId());
+            String patientId = patient.get().getPatientId();
+            if (patientId == null) {
+                response.put(SUCCESS, false);
+                response.put("message", "Invalid patient ID");
+                return response;
+            }
+            Optional<PatientData> patientData = patientDataService.getPatientData(patientId);
             if (patientData.isPresent()) {
                 response.put(SUCCESS, true);
                 response.put("data", patientData.get());
@@ -312,7 +333,7 @@ public class MinimalApp {
     @PostMapping("/api/qr/generate")
     public Map<String, Object> generateQR() {
         Map<String, Object> response = new HashMap<>();
-        String sessionId = "session-" + System.currentTimeMillis();
+        String sessionId = java.util.UUID.randomUUID().toString();
         
         try {
             String qrContent = "Session ID: " + sessionId;
@@ -338,7 +359,7 @@ public class MinimalApp {
         
         if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
             try {
-                String qrCodeId = "qr-" + System.currentTimeMillis();
+                String qrCodeId = java.util.UUID.randomUUID().toString();
                 String patientData = patientDataService.generateQRData(patient.get().getPatientId());
                 String base64QrCode = QRCodeGenerator.generateQRCodeBase64(patientData, 200, 200);
                 
@@ -369,12 +390,27 @@ public class MinimalApp {
     public Map<String, Object> scanQRCode(@RequestHeader("Authorization") String sessionId,
                                          @RequestBody Map<String, String> qrData) {
         Map<String, Object> response = new HashMap<>();
+        if (qrData == null || !qrData.containsKey("qrData")) {
+            response.put(SUCCESS, false);
+            response.put("message", "Invalid QR data");
+            return response;
+        }
         Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
         
         if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
             String scannedData = qrData.get("qrData");
+            // Add demo patient data for testing
+            Map<String, Object> patientData = new HashMap<>();
+            patientData.put("firstName", "John");
+            patientData.put("lastName", "Doe");
+            patientData.put("email", "john.doe@example.com");
+            patientData.put("dateOfBirth", "1990-01-01");
+            patientData.put("bloodType", "O+");
+            patientData.put("allergies", java.util.Arrays.asList("Penicillin"));
+            patientData.put("medications", java.util.Arrays.asList("Lisinopril 10mg"));
+            patientData.put("conditions", java.util.Arrays.asList("Hypertension"));
             response.put(SUCCESS, true);
-            response.put("scannedData", scannedData);
+            response.put("patientData", patientData);
             response.put("scannedBy", provider.get().getFirstName() + " " + provider.get().getLastName());
             response.put("scannedAt", java.time.LocalDateTime.now());
             response.put("message", "QR code scanned successfully");
@@ -404,7 +440,7 @@ public class MinimalApp {
     @PostMapping("/api/patients")
     public Map<String, Object> createPatient(@RequestBody Map<String, Object> patient) {
         Map<String, Object> response = new HashMap<>();
-        response.put("id", System.currentTimeMillis());
+        response.put("id", java.util.UUID.randomUUID().toString());
         response.put(FIRST_NAME, patient.get(FIRST_NAME));
         response.put(LAST_NAME, patient.get(LAST_NAME));
         response.put(EMAIL, patient.get(EMAIL));

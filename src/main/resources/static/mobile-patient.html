@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Portal - Healthcare QR (Section 508 Compliant)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .container { max-width: 400px; margin: 0 auto; padding: 20px; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #2c5aa0; margin-bottom: 30px; }
+        .btn { width: 100%; padding: 15px; border: 2px solid transparent; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 15px; transition: all 0.2s; }
+        .btn:focus { outline: 3px solid #005fcc; outline-offset: 2px; }
+        .btn-primary { background: #007AFF; color: white; border-color: #007AFF; }
+        .btn-primary:hover { background: #005fcc; }
+        .btn-success { background: #34C759; color: white; border-color: #34C759; }
+        .btn-success:hover { background: #28a745; }
+        .qr-container { text-align: center; padding: 20px; }
+        .qr-code { max-width: 250px; width: 100%; height: auto; border: 2px solid #ddd; border-radius: 8px; }
+        .status { padding: 10px; border-radius: 6px; margin: 10px 0; text-align: center; font-weight: 500; border: 2px solid; }
+        .status.success { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .status::before { content: "ℹ️ "; }
+        .status.success::before { content: "✅ "; }
+        .status.error::before { content: "❌ "; }
+        .patient-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .hidden { display: none; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-bottom: 15px; font-size: 16px; }
+        input:focus, select:focus { outline: none; border-color: #007AFF; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Patient Portal</h1>
+            <p>Healthcare QR Sharing</p>
+        </div>
+
+        <div id="loginCard" class="card">
+            <h2>Patient Login</h2>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" aria-required="true" aria-describedby="email-help" placeholder="Enter your email" value="john.doe@example.com">
+            <div id="email-help" class="sr-only">Enter the email address associated with your patient account</div>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" aria-required="true" aria-describedby="password-help" placeholder="Enter your password" value="password123">
+            <div id="password-help" class="sr-only">Enter your account password</div>
+            
+            <button class="btn btn-primary" onclick="login()" aria-describedby="login-help">Login to Patient Portal</button>
+            <div id="login-help" class="sr-only">Click to authenticate and access your patient dashboard</div>
+        </div>
+
+        <div id="dashboardCard" class="card hidden">
+            <div class="patient-info" role="region" aria-labelledby="patient-info-heading">
+                <h3 id="patient-info-heading">Patient Information</h3>
+                <p>Welcome, <span id="patientName">John Doe</span></p>
+                <p>Patient ID: <span id="patientId">patient-001</span></p>
+            </div>
+            
+            <h3>Generate QR Code for Data Sharing</h3>
+            <label for="dataTypes">Select Data Types to Share</label>
+            <select id="dataTypes" multiple aria-required="true" aria-describedby="datatypes-help">
+                <option value="DEMOGRAPHICS">Demographics Information</option>
+                <option value="VITALS">Vital Signs</option>
+                <option value="MEDICATIONS">Current Medications</option>
+                <option value="ALLERGIES">Known Allergies</option>
+            </select>
+            <div id="datatypes-help" class="sr-only">Select one or more data types to include in the QR code. Use Ctrl+Click to select multiple items.</div>
+            
+            <label for="purpose">Purpose of Data Sharing</label>
+            <input type="text" id="purpose" aria-describedby="purpose-help" placeholder="e.g., Emergency department visit" value="Emergency department visit">
+            <div id="purpose-help" class="sr-only">Describe why you are sharing this medical data</div>
+            
+            <button class="btn btn-success" onclick="generateQR()" aria-describedby="generate-help">Generate Secure QR Code</button>
+            <div id="generate-help" class="sr-only">Creates a time-limited QR code containing your selected medical data</div>
+            
+            <div id="qrResult" class="hidden" role="region" aria-labelledby="qr-heading">
+                <div class="qr-container">
+                    <h4 id="qr-heading">Your Medical Data QR Code</h4>
+                    <img id="qrImage" class="qr-code" alt="QR code containing encrypted patient medical data for healthcare provider access">
+                    <p><strong>Show this QR code to your healthcare provider</strong></p>
+                    <p>Security Notice: Code expires at <span id="expiryTime" aria-live="polite"></span></p>
+                </div>
+            </div>
+            
+            <div id="status" role="alert" aria-live="assertive"></div>
+        </div>
+    </div>
+
+    <script>
+        let sessionId = null;
+
+        function showStatus(message, type = 'success') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            status.style.display = 'block';
+            status.setAttribute('aria-live', 'assertive');
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showStatus('Please enter both email and password', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('Authenticating...', 'info');
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.sessionId) {
+                    sessionId = data.sessionId;
+                    document.getElementById('loginCard').classList.add('hidden');
+                    document.getElementById('dashboardCard').classList.remove('hidden');
+                    document.getElementById('dashboardCard').focus();
+                    showStatus('Login successful! Welcome to your patient portal.');
+                } else {
+                    showStatus('Login failed. Please verify your credentials and try again.', 'error');
+                }
+            } catch (error) {
+                showStatus('Login error: Unable to connect to server. Please try again.', 'error');
+            }
+        }
+
+        async function generateQR() {
+            if (!sessionId) {
+                showStatus('Session expired. Please login again.', 'error');
+                return;
+            }
+
+            const dataTypes = Array.from(document.getElementById('dataTypes').selectedOptions).map(o => o.value);
+            const purpose = document.getElementById('purpose').value;
+            
+            if (dataTypes.length === 0) {
+                showStatus('Please select at least one data type to share', 'error');
+                document.getElementById('dataTypes').focus();
+                return;
+            }
+
+            try {
+                showStatus('Generating secure QR code...', 'info');
+                const response = await fetch('/api/qr/generate', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionId}`
+                    },
+                    body: JSON.stringify({ dataTypes, purpose, expirationMinutes: 15 })
+                });
+                
+                const data = await response.json();
+                
+                if (data.qrCodeId) {
+                    const qrImage = document.getElementById('qrImage');
+                    qrImage.src = `/api/qr/image/${data.qrCodeId}`;
+                    qrImage.alt = `QR code for ${dataTypes.join(', ')} data sharing. Purpose: ${purpose}. Expires in 15 minutes.`;
+                    
+                    const expiryTime = new Date(Date.now() + 15*60*1000).toLocaleTimeString();
+                    document.getElementById('expiryTime').textContent = expiryTime;
+                    document.getElementById('qrResult').classList.remove('hidden');
+                    showStatus('QR Code generated successfully! Valid for 15 minutes.');
+                } else {
+                    showStatus('Failed to generate QR code. Please try again.', 'error');
+                }
+            } catch (error) {
+                showStatus('QR generation error: Unable to create secure code. Please try again.', 'error');
+            }
+        }
+
+        // Keyboard navigation support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.target.tagName === 'BUTTON') {
+                e.target.click();
+            }
+        });
+    </script>
+</body>
+</html>
