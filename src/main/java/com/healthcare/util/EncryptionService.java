@@ -36,7 +36,7 @@ public class EncryptionService {
             GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
             
-            byte[] ciphertext = cipher.doFinal(plaintext.getBytes());
+            byte[] ciphertext = cipher.doFinal(plaintext.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             
             // Combine IV and ciphertext
             byte[] encryptedWithIv = new byte[iv.length + ciphertext.length];
@@ -53,7 +53,14 @@ public class EncryptionService {
     
     public String decrypt(String encryptedData) {
         try {
+            if (encryptedData == null || encryptedData.trim().isEmpty()) {
+                throw new IllegalArgumentException("Encrypted data cannot be null or empty");
+            }
             byte[] encryptedWithIv = Base64.getDecoder().decode(encryptedData);
+            
+            if (encryptedWithIv.length < GCM_IV_LENGTH) {
+                throw new IllegalArgumentException("Invalid encrypted data length");
+            }
             
             // Extract IV and ciphertext
             byte[] iv = new byte[GCM_IV_LENGTH];
@@ -69,7 +76,7 @@ public class EncryptionService {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
             
             byte[] plaintext = cipher.doFinal(ciphertext);
-            return new String(plaintext);
+            return new String(plaintext, java.nio.charset.StandardCharsets.UTF_8);
             
         } catch (Exception e) {
             log.error("Decryption failed", e);
@@ -78,7 +85,15 @@ public class EncryptionService {
     }
     
     private SecretKey getSecretKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(encryptionKeyBase64);
-        return new SecretKeySpec(keyBytes, "AES");
+        try {
+            byte[] keyBytes = Base64.getDecoder().decode(encryptionKeyBase64);
+            if (keyBytes.length != 32) {
+                throw new IllegalArgumentException("AES key must be 32 bytes for AES-256");
+            }
+            return new SecretKeySpec(keyBytes, "AES");
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid encryption key format", e);
+            throw new RuntimeException("Invalid encryption key", e);
+        }
     }
 }

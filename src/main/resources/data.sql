@@ -1,11 +1,38 @@
+-- Insert organizations
+INSERT INTO organizations (id, name, type, npi, address, phone) VALUES
+('org-001', 'General Hospital', 'HOSPITAL', '1234567890', '123 Medical Center Dr, Healthcare City, HC 12345', '555-0100'),
+('org-002', 'Family Care Clinic', 'CLINIC', '1234567891', '456 Health St, Wellness Town, WT 67890', '555-0200');
+
+-- Insert providers
+INSERT INTO providers (id, npi, first_name, last_name, email, specialty, organization_id, license_number) VALUES
+('provider-001', '1234567892', 'Dr. Sarah', 'Johnson', 'provider@hospital.com', 'Emergency Medicine', 'org-001', 'MD123456'),
+('provider-002', '1234567893', 'Dr. Michael', 'Chen', 'dr.chen@familycare.com', 'Family Medicine', 'org-002', 'MD789012'),
+('provider-003', '1234567894', 'Dr. Emily', 'Rodriguez', 'e.rodriguez@hospital.com', 'Cardiology', 'org-001', 'MD345678');
+
 -- Insert test patients
 INSERT INTO patients (id, fhir_id, first_name, last_name, email, created_at, updated_at) VALUES
 ('patient-001', 'fhir-patient-001', 'John', 'Doe', 'john.doe@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('patient-002', 'fhir-patient-002', 'Jane', 'Smith', 'jane.smith@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('patient-003', 'fhir-patient-003', 'Bob', 'Johnson', 'bob.johnson@example.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+-- Insert provider-patient relationships
+INSERT INTO provider_patient_relationships (id, provider_id, patient_id, relationship_type, established_date, status) VALUES
+('rel-001', 'provider-001', 'patient-001', 'EMERGENCY', '2024-01-01 10:00:00', 'ACTIVE'),
+('rel-002', 'provider-002', 'patient-001', 'PRIMARY_CARE', '2023-06-15 09:30:00', 'ACTIVE'),
+('rel-003', 'provider-003', 'patient-002', 'SPECIALIST', '2024-01-15 14:00:00', 'ACTIVE');
+
 -- Insert test consent records
-INSERT INTO consent_records (id, patient_id, grantee_id, allowed_data_types, status, granted_at, expires_at, purpose) VALUES
-('consent-001', 'patient-001', 'provider-001', 'DEMOGRAPHICS,VITALS,MEDICATIONS', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', 'Emergency care'),
-('consent-002', 'patient-002', 'provider-001', 'DEMOGRAPHICS,VITALS', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', 'Routine checkup'),
-('consent-003', 'patient-003', 'provider-002', 'DEMOGRAPHICS,ALLERGIES', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', 'Allergy consultation');
+INSERT INTO consent_records (id, patient_id, grantee_id, status, granted_at, expires_at, purpose) VALUES
+('consent-001', 'patient-001', 'provider-001', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', 'Emergency care'),
+('consent-002', 'patient-002', 'provider-001', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', 'Routine checkup'),
+('consent-003', 'patient-003', 'provider-002', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '30 days', 'Allergy consultation');
+
+-- Insert allowed data types for consent records
+INSERT INTO consent_record_allowed_data_types (consent_record_id, allowed_data_types) VALUES
+('consent-001', 'DEMOGRAPHICS'),
+('consent-001', 'VITALS'),
+('consent-001', 'MEDICATIONS'),
+('consent-002', 'DEMOGRAPHICS'),
+('consent-002', 'VITALS'),
+('consent-003', 'DEMOGRAPHICS'),
+('consent-003', 'ALLERGIES');

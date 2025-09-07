@@ -3,7 +3,7 @@ package com.healthcare.service;
 import com.healthcare.model.PatientData;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.List;
@@ -11,18 +11,18 @@ import java.util.ArrayList;
 
 @Service
 public class PatientDataService {
-    private final Map<String, PatientData> patientDataStore = new HashMap<>();
+    private final Map<String, PatientData> patientDataStore = new ConcurrentHashMap<>();
 
     public PatientDataService() {
         // Initialize with sample data
-        PatientData sampleData = new PatientData("patient-1", "John", "Doe", "patient@example.com");
+        PatientData sampleData = new PatientData("patient-001", "John", "Doe", "john.doe@example.com");
         sampleData.setDateOfBirth("1990-01-15");
         sampleData.setBloodType("O+");
         sampleData.setAllergies(List.of("Penicillin", "Shellfish"));
         sampleData.setMedications(List.of("Lisinopril 10mg", "Metformin 500mg"));
         sampleData.setConditions(List.of("Hypertension", "Type 2 Diabetes"));
         sampleData.setEmergencyContact("Jane Doe - 555-0123");
-        patientDataStore.put("patient-1", sampleData);
+        patientDataStore.put("patient-001", sampleData);
     }
 
     public Optional<PatientData> getPatientData(String patientId) {
@@ -45,9 +45,9 @@ public class PatientDataService {
     public List<PatientData> searchPatients(String query) {
         return patientDataStore.values().stream()
                 .filter(patient -> 
-                    patient.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
-                    patient.getLastName().toLowerCase().contains(query.toLowerCase()) ||
-                    patient.getEmail().toLowerCase().contains(query.toLowerCase()))
+                    patient.getFirstName().toLowerCase(java.util.Locale.ROOT).contains(query.toLowerCase(java.util.Locale.ROOT)) ||
+                    patient.getLastName().toLowerCase(java.util.Locale.ROOT).contains(query.toLowerCase(java.util.Locale.ROOT)) ||
+                    patient.getEmail().toLowerCase(java.util.Locale.ROOT).contains(query.toLowerCase(java.util.Locale.ROOT)))
                 .toList();
     }
 
