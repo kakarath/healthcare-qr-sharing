@@ -27,3 +27,25 @@ log/
 # IntelliJ
 .idea/
 web-pricer.iml
+
+# SSL Certificates and Keys - NEVER COMMIT THESE
+ssl/*.key
+ssl/*.crt
+ssl/*.csr
+ssl/*.p12
+ssl/*.pem
+ssl/*.jks
+ssl/keystore.*
+
+# Environment files with secrets
+.env
+.env.local
+.env.production
+
+# Backup files
+backups/
+*.sql
+
+# Logs with potential sensitive data
+logs/
+*.log
