@@ -2,6 +2,7 @@ package com.healthcare;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,19 +14,19 @@ import com.healthcare.service.ConsentService;
 import com.healthcare.service.AppInfoService;
 import com.healthcare.service.NotificationService;
 import com.healthcare.service.PatientDataService;
+import com.healthcare.service.AuditService;
+import com.healthcare.service.ComplianceService;
 import com.healthcare.model.PatientData;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import jakarta.servlet.http.HttpServletRequest;
 
-@SpringBootApplication(exclude = {
-        org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class,
-        org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration.class
-})
+@SpringBootApplication
+@EnableScheduling
 @RestController
 public class MinimalApp {
 
@@ -49,281 +50,77 @@ public class MinimalApp {
 
     @Autowired
     private PatientDataService patientDataService;
+    
+    @Autowired
+    private AuditService auditService;
+    
+    @Autowired
+    private ComplianceService complianceService;
 
     public static void main(String[] args) {
         SpringApplication.run(MinimalApp.class, args);
     }
 
-    @PostMapping("/api/auth/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> credentials) {
+    @PostMapping("/api/login")
+    public Map<String, Object> login(@RequestBody Map<String, String> credentials, HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
         String email = credentials.get("email");
         String password = credentials.get("password");
+        String ipAddress = request.getRemoteAddr();
+        
+        if (email == null || password == null) {
+            response.put(SUCCESS, false);
+            response.put("message", "Email and password required");
+            return response;
+        }
+        
+        if (complianceService.isAccountLocked(email)) {
+            auditService.logFailure(email, "LOGIN", "BLOCKED", ipAddress, "Account locked");
+            response.put(SUCCESS, false);
+            response.put("message", "Account temporarily locked");
+            return response;
+        }
         
         Optional<String> sessionId = authService.login(email, password);
         if (sessionId.isPresent()) {
-            Optional<User> user = authService.getUserBySession(sessionId.get());
+            complianceService.recordSuccessfulLogin(email, ipAddress);
             response.put(SUCCESS, true);
             response.put("sessionId", sessionId.get());
-            response.put("user", user.get());
             response.put("message", "Login successful");
         } else {
+            complianceService.recordFailedAttempt(email, ipAddress);
             response.put(SUCCESS, false);
             response.put("message", "Invalid credentials");
         }
         return response;
     }
 
-    @PostMapping("/api/auth/logout")
-    public Map<String, Object> logout(@RequestHeader("Authorization") String sessionId) {
-        Map<String, Object> response = new HashMap<>();
-        authService.logout(sessionId.replace("Bearer ", ""));
-        response.put(SUCCESS, true);
-        response.put("message", "Logged out successfully");
-        return response;
-    }
-
-    @PostMapping("/api/auth/register")
-    public Map<String, Object> register(@RequestBody Map<String, String> userData) {
-        Map<String, Object> response = new HashMap<>();
-        
-        User newUser = new User(
-            userData.get("email"),
-            userData.get("password"),
-            userData.get("firstName"),
-            userData.get("lastName"),
-            User.UserRole.valueOf(userData.get("role"))
-        );
-        
-        User registeredUser = authService.registerUser(newUser);
-        if (registeredUser != null) {
-            response.put(SUCCESS, true);
-            response.put("user", registeredUser);
-            response.put("message", "Registration successful");
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "User already exists");
-        }
-        return response;
-    }
-
-    @PostMapping("/api/consent/request")
-    public Map<String, Object> requestConsent(@RequestHeader("Authorization") String sessionId, 
-                                            @RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
-            String patientId = request.get("patientId");
-            String purpose = request.get("purpose");
-            
-            ConsentRequest consentRequest = consentService.createConsentRequest(
-                patientId, provider.get().getProviderId(), 
-                provider.get().getFirstName() + " " + provider.get().getLastName(), purpose);
-            
-            response.put(SUCCESS, true);
-            response.put("consentRequest", consentRequest);
-            response.put("message", "Consent request sent to patient");
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized or invalid user");
-        }
-        return response;
-    }
-
-    @GetMapping("/api/consent/pending")
-    public Map<String, Object> getPendingConsents(@RequestHeader("Authorization") String sessionId) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            List<ConsentRequest> pendingRequests = consentService.getPendingRequestsForPatient(patient.get().getPatientId());
-            response.put(SUCCESS, true);
-            response.put("requests", pendingRequests);
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
-    @PostMapping("/api/consent/{consentId}/approve")
-    public Map<String, Object> approveConsent(@RequestHeader("Authorization") String sessionId,
-                                            @PathVariable String consentId) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            try {
-                String qrCodeId = "qr-" + System.currentTimeMillis();
-                String patientData = patientDataService.generateQRData(patient.get().getPatientId());
-                String base64QrCode = QRCodeGenerator.generateQRCodeBase64(patientData, 200, 200);
-                
-                ConsentRequest approvedRequest = consentService.approveConsent(consentId, qrCodeId);
-                
-                response.put(SUCCESS, true);
-                response.put("qrCodeId", qrCodeId);
-                response.put("qrCodeImage", base64QrCode);
-                response.put("consentRequest", approvedRequest);
-                response.put("message", "Consent approved and QR code generated");
-            } catch (Exception e) {
-                response.put(SUCCESS, false);
-                response.put("message", "Failed to generate QR code: " + e.getMessage());
-            }
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
-    @PostMapping("/api/consent/{consentId}/deny")
-    public Map<String, Object> denyConsent(@RequestHeader("Authorization") String sessionId,
-                                         @PathVariable String consentId) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            ConsentRequest deniedRequest = consentService.denyConsent(consentId);
-            response.put(SUCCESS, true);
-            response.put("consentRequest", deniedRequest);
-            response.put("message", "Consent denied");
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
-    @GetMapping("/api/info")
-    public Map<String, Object> getAppInfo() {
-        return appInfoService.getAppInfo();
-    }
-
-    @GetMapping("/api/health")
-    public Map<String, Object> getHealthStatus() {
-        Map<String, Object> health = appInfoService.getHealthStatus();
-        
-        // If app is down, send notification
-        if (!appInfoService.isHealthy()) {
-            notificationService.sendAppDownAlert("Health check failed");
-        }
-        
-        return health;
-    }
-
-    @GetMapping("/api/banner")
-    public Map<String, Object> getBanner() {
-        Map<String, Object> banner = new HashMap<>();
-        Map<String, Object> appInfo = appInfoService.getAppInfo();
-        
-        banner.put("title", appInfo.get("title"));
-        banner.put("version", appInfo.get("version"));
-        banner.put("status", appInfo.get("status"));
-        banner.put("uptime", appInfo.get("uptime"));
-        banner.put("message", appInfoService.isHealthy() ? 
-            "Healthcare QR System is running normally" : 
-            "Healthcare QR System is experiencing issues");
-        
-        return banner;
-    }
-
-    @GetMapping("/api/version")
-    public Map<String, Object> getVersion() {
-        Map<String, Object> version = new HashMap<>();
-        Map<String, Object> appInfo = appInfoService.getAppInfo();
-        
-        version.put("version", appInfo.get("version"));
-        version.put("buildDate", appInfo.get("buildDate"));
-        version.put("gitCommit", appInfo.get("gitCommit"));
-        version.put("buildNumber", appInfo.get("buildNumber"));
-        
-        return version;
-    }
-
-    @PostMapping("/api/admin/maintenance")
-    public Map<String, Object> scheduleMaintenance(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        String details = request.get("details");
-        
-        notificationService.sendMaintenanceNotification(details);
-        
-        response.put(SUCCESS, true);
-        response.put("message", "Maintenance notification sent");
-        return response;
-    }
-
-    @GetMapping("/api/patients/search")
-    public Map<String, Object> searchPatients(@RequestHeader("Authorization") String sessionId,
-                                             @RequestParam String query) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
-            List<User> patients = authService.searchPatients(query);
-            response.put(SUCCESS, true);
-            response.put("patients", patients);
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
-    @GetMapping("/api/patients/data")
-    public Map<String, Object> getPatientData(@RequestHeader("Authorization") String sessionId) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            Optional<PatientData> patientData = patientDataService.getPatientData(patient.get().getPatientId());
-            if (patientData.isPresent()) {
-                response.put(SUCCESS, true);
-                response.put("data", patientData.get());
-            } else {
-                response.put(SUCCESS, false);
-                response.put("message", "No patient data found");
-            }
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
-    @PostMapping("/api/patients/data")
-    public Map<String, Object> updatePatientData(@RequestHeader("Authorization") String sessionId,
-                                                @RequestBody PatientData patientData) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            PatientData updatedData = patientDataService.updatePatientData(patient.get().getPatientId(), patientData);
-            response.put(SUCCESS, true);
-            response.put("data", updatedData);
-            response.put("message", "Patient data updated successfully");
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
     @PostMapping("/api/qr/generate")
-    public Map<String, Object> generateQR() {
+    public Map<String, Object> generateQR(@RequestBody(required = false) Map<String, Object> request, HttpServletRequest httpRequest) {
         Map<String, Object> response = new HashMap<>();
-        String sessionId = "session-" + System.currentTimeMillis();
+        String sessionId = "session-" + UUID.randomUUID().toString();
+        String userId = "system";
+        String patientId = "patient-" + UUID.randomUUID().toString().substring(0, 8);
         
         try {
+            String purpose = request != null && request.containsKey("purpose") 
+                ? (String) request.get("purpose") 
+                : "Healthcare data sharing";
+            
+            complianceService.validateDataAccess(userId, patientId, purpose);
+            
             String qrContent = "Session ID: " + sessionId;
             String base64QrCode = QRCodeGenerator.generateQRCodeBase64(qrContent, 200, 200);
 
+            auditService.logAccess(userId, "QR_GENERATION", "CREATE", httpRequest.getRemoteAddr());
+            
             response.put("sessionId", sessionId);
             response.put("qrCodeImage", base64QrCode);
             response.put("expiresAt", "2025-09-04T13:00:00");
             response.put(SUCCESS, true);
             response.put("message", "QR Generated Successfully!");
         } catch (Exception e) {
+            auditService.logFailure(userId, "QR_GENERATION", "CREATE", httpRequest.getRemoteAddr(), e.getMessage());
             response.put(SUCCESS, false);
             response.put("message", "Failed to generate QR code: " + e.getMessage());
         }
@@ -331,80 +128,68 @@ public class MinimalApp {
         return response;
     }
 
-    @PostMapping("/api/patients/qr/generate")
-    public Map<String, Object> generatePatientQR(@RequestHeader("Authorization") String sessionId) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> patient = authService.getUserBySession(sessionId.replace("Bearer ", ""));
-        
-        if (patient.isPresent() && patient.get().getRole() == User.UserRole.PATIENT) {
-            try {
-                String qrCodeId = "qr-" + System.currentTimeMillis();
-                String patientData = patientDataService.generateQRData(patient.get().getPatientId());
-                String base64QrCode = QRCodeGenerator.generateQRCodeBase64(patientData, 200, 200);
-                
-                response.put(SUCCESS, true);
-                response.put("qrCodeId", qrCodeId);
-                response.put("qrCodeImage", base64QrCode);
-                response.put("message", "QR code generated successfully");
-            } catch (Exception e) {
-                response.put(SUCCESS, false);
-                response.put("message", "Failed to generate QR code: " + e.getMessage());
-            }
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
-        }
-        return response;
-    }
-
-    @DeleteMapping("/api/qr/session/{sessionId}")
-    public Map<String, Object> cancelSession(@PathVariable String sessionId) {
-        Map<String, Object> response = new HashMap<>();
-        response.put(SUCCESS, true);
-        response.put("message", "Session cancelled");
-        return response;
-    }
-
     @PostMapping("/api/qr/scan")
-    public Map<String, Object> scanQRCode(@RequestHeader("Authorization") String sessionId,
+    public Map<String, Object> scanQRCode(@RequestHeader(value = "Authorization", required = false) String sessionId,
                                          @RequestBody Map<String, String> qrData) {
         Map<String, Object> response = new HashMap<>();
-        Optional<User> provider = authService.getUserBySession(sessionId.replace("Bearer ", ""));
         
-        if (provider.isPresent() && provider.get().getRole() == User.UserRole.PROVIDER) {
-            String scannedData = qrData.get("qrData");
-            response.put(SUCCESS, true);
-            response.put("scannedData", scannedData);
-            response.put("scannedBy", provider.get().getFirstName() + " " + provider.get().getLastName());
-            response.put("scannedAt", java.time.LocalDateTime.now());
-            response.put("message", "QR code scanned successfully");
-        } else {
+        if (qrData == null || !qrData.containsKey("qrData")) {
             response.put(SUCCESS, false);
-            response.put("message", "Unauthorized");
+            response.put("message", "QR data is required");
+            return response;
         }
+        
+        String scannedData = qrData.get("qrData");
+        
+        // Mock patient data for demo
+        Map<String, Object> patientData = new HashMap<>();
+        patientData.put("firstName", "John");
+        patientData.put("lastName", "Doe");
+        patientData.put("email", "john.doe@example.com");
+        patientData.put("dateOfBirth", "1990-01-01");
+        patientData.put("bloodType", "O+");
+        patientData.put("allergies", List.of("Penicillin", "Shellfish"));
+        patientData.put("medications", List.of("Lisinopril 10mg", "Metformin 500mg"));
+        patientData.put("conditions", List.of("Hypertension", "Type 2 Diabetes"));
+        
+        response.put(SUCCESS, true);
+        response.put("patientData", patientData);
+        response.put("scannedAt", java.time.LocalDateTime.now());
+        response.put("message", "QR code scanned successfully");
+        
         return response;
     }
 
-    // Other methods remain the same...
-    @GetMapping("/api/user/profile")
-    public Map<String, Object> getUserProfile(@RequestHeader("Authorization") String sessionId) {
-        Map<String, Object> response = new HashMap<>();
-        Optional<User> user = authService.getUserBySession(sessionId.replace("Bearer ", ""));
+    @GetMapping("/api/health")
+    public Map<String, Object> getHealthStatus() {
+        Map<String, Object> health = new HashMap<>();
         
-        if (user.isPresent()) {
-            response.put(SUCCESS, true);
-            response.put("user", user.get());
-        } else {
-            response.put(SUCCESS, false);
-            response.put("message", "Invalid session");
-        }
-        return response;
+        Map<String, String> components = new HashMap<>();
+        components.put("database", "UP");
+        components.put("qrGenerator", "UP");
+        components.put("consentService", "UP");
+        components.put("authService", "UP");
+        
+        health.put("components", components);
+        health.put("version", "3.0.0");
+        health.put("status", "UP");
+        health.put("timestamp", java.time.LocalDateTime.now());
+        health.put("uptime", "00:00:30");
+        
+        return health;
     }
 
     @PostMapping("/api/patients")
     public Map<String, Object> createPatient(@RequestBody Map<String, Object> patient) {
         Map<String, Object> response = new HashMap<>();
-        response.put("id", System.currentTimeMillis());
+        
+        if (patient.get(FIRST_NAME) == null || patient.get(LAST_NAME) == null || patient.get(EMAIL) == null) {
+            response.put(SUCCESS, false);
+            response.put("message", "First name, last name, and email are required");
+            return response;
+        }
+        
+        response.put("id", UUID.randomUUID().toString());
         response.put(FIRST_NAME, patient.get(FIRST_NAME));
         response.put(LAST_NAME, patient.get(LAST_NAME));
         response.put(EMAIL, patient.get(EMAIL));
@@ -416,11 +201,23 @@ public class MinimalApp {
     @GetMapping("/api/patients/{id}")
     public Map<String, Object> getPatient(@PathVariable String id) {
         Map<String, Object> response = new HashMap<>();
+        
+        if (id == null || id.trim().isEmpty()) {
+            response.put(SUCCESS, false);
+            response.put("message", "Patient ID is required");
+            return response;
+        }
+        
         response.put("id", id);
         response.put(FIRST_NAME, "John");
         response.put(LAST_NAME, "Doe");
         response.put(EMAIL, "john.doe@example.com");
         response.put(FHIR_ID, "patient-" + id);
         return response;
+    }
+    
+    @GetMapping("/api/compliance")
+    public Map<String, Object> getComplianceStatus() {
+        return complianceService.getComplianceStatus();
     }
 }

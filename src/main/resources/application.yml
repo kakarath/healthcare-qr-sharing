@@ -10,12 +10,17 @@ spring:
     
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
         
   security:
     oauth2:
@@ -49,6 +54,22 @@ healthcare:
   audit:
     enabled: true
     retention-days: 2555 # 7 years for HIPAA compliance
+  
+  backup:
+    enabled: ${BACKUP_ENABLED:true}
+    retention:
+      days: ${BACKUP_RETENTION_DAYS:2555}
+  
+  compliance:
+    lockout:
+      max-attempts: ${MAX_LOGIN_ATTEMPTS:3}
+      duration-minutes: ${LOCKOUT_DURATION:30}
+    session:
+      timeout-minutes: ${SESSION_TIMEOUT:30}
+
+  task:
+    scheduling:
+      enabled: true
 
 server:
   port: 8080

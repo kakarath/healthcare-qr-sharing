@@ -1,31 +1,33 @@
 package com.healthcare.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.nio.charset.StandardCharsets;
 
 @Component
-@Slf4j
 public class EncryptionService {
     
-    @Value("${healthcare.security.encryption.key}")
+    @Value("${healthcare.security.encryption.key:}")
     private String encryptionKeyBase64;
     
-    @Value("${healthcare.security.encryption.algorithm}")
+    @Value("${healthcare.security.encryption.algorithm:AES/GCM/NoPadding}")
     private String algorithm;
     
     private static final int GCM_TAG_LENGTH = 16;
     private static final int GCM_IV_LENGTH = 12;
     
     public String encrypt(String plaintext) {
+        if (plaintext == null || plaintext.trim().isEmpty()) {
+            throw new IllegalArgumentException("Plaintext cannot be null or empty");
+        }
+        
         try {
             SecretKey secretKey = getSecretKey();
             Cipher cipher = Cipher.getInstance(algorithm);
@@ -36,7 +38,7 @@ public class EncryptionService {
             GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, iv);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
             
-            byte[] ciphertext = cipher.doFinal(plaintext.getBytes());
+            byte[] ciphertext = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
             
             // Combine IV and ciphertext
             byte[] encryptedWithIv = new byte[iv.length + ciphertext.length];
@@ -46,7 +48,7 @@ public class EncryptionService {
             return Base64.getEncoder().encodeToString(encryptedWithIv);
             
         } catch (Exception e) {
-            log.error("Encryption failed", e);
+            System.err.println("Encryption failed: " + e.getMessage());
             throw new RuntimeException("Encryption failed", e);
         }
     }
@@ -69,16 +71,28 @@ public class EncryptionService {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
             
             byte[] plaintext = cipher.doFinal(ciphertext);
-            return new String(plaintext);
+            return new String(plaintext, StandardCharsets.UTF_8);
             
         } catch (Exception e) {
-            log.error("Decryption failed", e);
+            System.err.println("Decryption failed: " + e.getMessage());
             throw new RuntimeException("Decryption failed", e);
         }
     }
     
     private SecretKey getSecretKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(encryptionKeyBase64);
-        return new SecretKeySpec(keyBytes, "AES");
+        if (encryptionKeyBase64 == null || encryptionKeyBase64.trim().isEmpty()) {
+            // Use default key for development - MUST be changed in production
+            encryptionKeyBase64 = "dGVzdC1rZXktZm9yLWRldmVsb3BtZW50LW9ubHk="; // "test-key-for-development-only" in base64
+        }
+        
+        try {
+            byte[] keyBytes = Base64.getDecoder().decode(encryptionKeyBase64);
+            if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
+                throw new IllegalArgumentException("Invalid AES key length: " + keyBytes.length + " bytes");
+            }
+            return new SecretKeySpec(keyBytes, "AES");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Invalid encryption key format", e);
+        }
     }
 }
