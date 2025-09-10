@@ -28,9 +28,19 @@ public class AuthService {
         provider1.setProviderId("provider-001");
         users.put("provider@hospital.com", provider1);
         
-        // Store hashed passwords separately for security
-        storeHashedPassword("john.doe@example.com", "password123");
-        storeHashedPassword("provider@hospital.com", "provider123");
+        // Store hashed passwords from environment variables
+        String userPassword = System.getenv("DEFAULT_USER_PASSWORD");
+        String providerPassword = System.getenv("DEFAULT_PROVIDER_PASSWORD");
+        
+        if (userPassword == null || userPassword.trim().isEmpty()) {
+            throw new IllegalStateException("DEFAULT_USER_PASSWORD environment variable must be set");
+        }
+        if (providerPassword == null || providerPassword.trim().isEmpty()) {
+            throw new IllegalStateException("DEFAULT_PROVIDER_PASSWORD environment variable must be set");
+        }
+        
+        storeHashedPassword("john.doe@example.com", userPassword);
+        storeHashedPassword("provider@hospital.com", providerPassword);
     }
     
     private final Map<String, String> hashedPasswords = new ConcurrentHashMap<>();

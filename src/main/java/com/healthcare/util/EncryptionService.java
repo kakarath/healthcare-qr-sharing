@@ -48,7 +48,7 @@ public class EncryptionService {
             return Base64.getEncoder().encodeToString(encryptedWithIv);
             
         } catch (Exception e) {
-            System.err.println("Encryption failed: " + e.getMessage());
+            // Log encryption failure without exposing sensitive data
             throw new RuntimeException("Encryption failed", e);
         }
     }
@@ -74,15 +74,14 @@ public class EncryptionService {
             return new String(plaintext, StandardCharsets.UTF_8);
             
         } catch (Exception e) {
-            System.err.println("Decryption failed: " + e.getMessage());
+            // Log decryption failure without exposing sensitive data
             throw new RuntimeException("Decryption failed", e);
         }
     }
     
     private SecretKey getSecretKey() {
         if (encryptionKeyBase64 == null || encryptionKeyBase64.trim().isEmpty()) {
-            // Use default key for development - MUST be changed in production
-            encryptionKeyBase64 = "dGVzdC1rZXktZm9yLWRldmVsb3BtZW50LW9ubHk="; // "test-key-for-development-only" in base64
+            throw new IllegalStateException("ENCRYPTION_KEY environment variable must be set");
         }
         
         try {

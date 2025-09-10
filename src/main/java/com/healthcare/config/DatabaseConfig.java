@@ -35,7 +35,7 @@ public class DatabaseConfig {
                 String[] statements = schemaSql.split(";");
                 for (String statement : statements) {
                     if (!statement.trim().isEmpty()) {
-                        jdbcTemplate.execute(statement.trim());
+                        jdbcTemplate.update(statement.trim());
                     }
                 }
                 
@@ -46,7 +46,7 @@ public class DatabaseConfig {
                 String[] dataStatements = dataSql.split(";");
                 for (String statement : dataStatements) {
                     if (!statement.trim().isEmpty() && !statement.trim().startsWith("--")) {
-                        jdbcTemplate.execute(statement.trim());
+                        jdbcTemplate.update(statement.trim());
                     }
                 }
             }

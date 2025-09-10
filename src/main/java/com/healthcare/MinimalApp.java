@@ -141,6 +141,20 @@ public class MinimalApp {
         
         String scannedData = qrData.get("qrData");
         
+        // Validate QR data format and expiration
+        if (scannedData == null || scannedData.trim().isEmpty()) {
+            response.put(SUCCESS, false);
+            response.put("message", "Invalid QR data format");
+            return response;
+        }
+        
+        // Basic validation - QR data should be encrypted and base64 encoded
+        if (!scannedData.matches("^[A-Za-z0-9+/]*={0,2}$")) {
+            response.put(SUCCESS, false);
+            response.put("message", "Invalid QR data format");
+            return response;
+        }
+        
         // Mock patient data for demo
         Map<String, Object> patientData = new HashMap<>();
         patientData.put("firstName", "John");

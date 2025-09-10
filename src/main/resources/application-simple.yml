@@ -4,7 +4,7 @@ spring:
   main:
     web-application-type: servlet
   security:
-    enabled: false
+    enabled: true
 logging:
   level:
     root: INFO
