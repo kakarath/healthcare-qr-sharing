@@ -21,6 +21,7 @@ import com.healthcare.model.PatientData;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import jakarta.servlet.http.HttpServletRequest;
@@ -84,9 +85,26 @@ public class MinimalApp {
         Optional<String> sessionId = authService.login(email, password);
         if (sessionId.isPresent()) {
             complianceService.recordSuccessfulLogin(email, ipAddress);
+            Optional<User> user = authService.getUserByEmail(email);
             response.put(SUCCESS, true);
             response.put("sessionId", sessionId.get());
             response.put("message", "Login successful");
+            
+            // Always add user data
+            Map<String, Object> userData = new HashMap<>();
+            if (user.isPresent()) {
+                userData.put("email", user.get().getEmail());
+                userData.put("firstName", user.get().getFirstName());
+                userData.put("lastName", user.get().getLastName());
+                userData.put("role", user.get().getRole().toString());
+            } else {
+                // Fallback user data
+                userData.put("email", email);
+                userData.put("firstName", "User");
+                userData.put("lastName", "Name");
+                userData.put("role", email.contains("provider") ? "PROVIDER" : "PATIENT");
+            }
+            response.put("user", userData);
         } else {
             complianceService.recordFailedAttempt(email, ipAddress);
             response.put(SUCCESS, false);
@@ -174,6 +192,24 @@ public class MinimalApp {
         return response;
     }
 
+    @GetMapping("/api/version")
+    public Map<String, Object> getVersion() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("version", "3.0.0");
+        response.put("buildDate", "2024-01-01");
+        response.put("fhirVersion", "R4");
+        return response;
+    }
+    
+    @GetMapping("/api/banner")
+    public Map<String, Object> getBanner() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("uptime", "Running");
+        response.put("environment", "Production");
+        return response;
+    }
+    
     @GetMapping("/api/health")
     public Map<String, Object> getHealthStatus() {
         Map<String, Object> health = new HashMap<>();
@@ -230,8 +266,243 @@ public class MinimalApp {
         return response;
     }
     
+    @GetMapping("/api/patients/search")
+    public Map<String, Object> searchPatients(@RequestParam(required = false) String name,
+                                             @RequestParam(required = false) String id) {
+        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> patients = new ArrayList<>();
+        
+        // Mock search results
+        if ((name != null && name.toLowerCase().contains("john")) || 
+            (id != null && id.equals("patient-001"))) {
+            patients.add(Map.of(
+                "id", "patient-001",
+                "firstName", "John",
+                "lastName", "Doe",
+                "email", "john.doe@example.com",
+                "fhirId", "patient-001",
+                "dateOfBirth", "1990-01-01",
+                "gender", "male"
+            ));
+        }
+        
+        if ((name != null && name.toLowerCase().contains("jane")) || 
+            (id != null && id.equals("patient-002"))) {
+            patients.add(Map.of(
+                "id", "patient-002",
+                "firstName", "Jane",
+                "lastName", "Smith",
+                "email", "jane.smith@example.com",
+                "fhirId", "patient-002",
+                "dateOfBirth", "1985-05-15",
+                "gender", "female"
+            ));
+        }
+        
+        response.put(SUCCESS, true);
+        response.put("patients", patients);
+        response.put("total", patients.size());
+        return response;
+    }
+    
     @GetMapping("/api/compliance")
     public Map<String, Object> getComplianceStatus() {
         return complianceService.getComplianceStatus();
+    }
+    
+    @GetMapping("/api/patients/fhir/{id}")
+    public Map<String, Object> getFHIRPatient(@PathVariable String id) {
+        Map<String, Object> fhirPatient = new HashMap<>();
+        
+        // FHIR R4 Patient Resource Structure
+        fhirPatient.put("resourceType", "Patient");
+        fhirPatient.put("id", id);
+        fhirPatient.put("meta", Map.of(
+            "versionId", "1",
+            "lastUpdated", java.time.Instant.now().toString(),
+            "profile", List.of("http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient")
+        ));
+        
+        // Identifiers
+        fhirPatient.put("identifier", List.of(
+            Map.of(
+                "use", "usual",
+                "type", Map.of(
+                    "coding", List.of(Map.of(
+                        "system", "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code", "MR",
+                        "display", "Medical Record Number"
+                    ))
+                ),
+                "system", "http://hospital.example.org",
+                "value", "patient-" + id
+            ),
+            Map.of(
+                "use", "official",
+                "type", Map.of(
+                    "coding", List.of(Map.of(
+                        "system", "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code", "SS",
+                        "display", "Social Security Number"
+                    ))
+                ),
+                "system", "http://hl7.org/fhir/sid/us-ssn",
+                "value", "123-45-6789"
+            )
+        ));
+        
+        // Name
+        fhirPatient.put("name", List.of(Map.of(
+            "use", "official",
+            "family", "Doe",
+            "given", List.of("John"),
+            "text", "John Doe"
+        )));
+        
+        // Demographics
+        fhirPatient.put("gender", "male");
+        fhirPatient.put("birthDate", "1990-01-01");
+        
+        // Contact Info
+        fhirPatient.put("telecom", List.of(
+            Map.of(
+                "system", "phone",
+                "value", "555-0123",
+                "use", "home"
+            ),
+            Map.of(
+                "system", "email",
+                "value", "john.doe@example.com",
+                "use", "home"
+            )
+        ));
+        
+        // Address
+        fhirPatient.put("address", List.of(Map.of(
+            "use", "home",
+            "type", "both",
+            "text", "123 Main St, Anytown, ST 12345",
+            "line", List.of("123 Main St"),
+            "city", "Anytown",
+            "state", "ST",
+            "postalCode", "12345",
+            "country", "US"
+        )));
+        
+        // Marital Status
+        fhirPatient.put("maritalStatus", Map.of(
+            "coding", List.of(Map.of(
+                "system", "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+                "code", "M",
+                "display", "Married"
+            ))
+        ));
+        
+        // Communication
+        fhirPatient.put("communication", List.of(Map.of(
+            "language", Map.of(
+                "coding", List.of(Map.of(
+                    "system", "urn:ietf:bcp:47",
+                    "code", "en-US",
+                    "display", "English (United States)"
+                ))
+            ),
+            "preferred", true
+        )));
+        
+        // Emergency Contact
+        fhirPatient.put("contact", List.of(Map.of(
+            "relationship", List.of(Map.of(
+                "coding", List.of(Map.of(
+                    "system", "http://terminology.hl7.org/CodeSystem/v2-0131",
+                    "code", "E",
+                    "display", "Emergency Contact"
+                ))
+            )),
+            "name", Map.of(
+                "family", "Doe",
+                "given", List.of("Jane")
+            ),
+            "telecom", List.of(Map.of(
+                "system", "phone",
+                "value", "555-0456",
+                "use", "mobile"
+            ))
+        )));
+        
+        return fhirPatient;
+    }
+    
+    @GetMapping("/api/patients/observations/{patientId}")
+    public Map<String, Object> getFHIRObservations(@PathVariable String patientId) {
+        Map<String, Object> bundle = new HashMap<>();
+        bundle.put("resourceType", "Bundle");
+        bundle.put("id", UUID.randomUUID().toString());
+        bundle.put("type", "searchset");
+        bundle.put("timestamp", java.time.Instant.now().toString());
+        
+        List<Map<String, Object>> entries = List.of(
+            // Blood Pressure
+            Map.of(
+                "resource", Map.of(
+                    "resourceType", "Observation",
+                    "id", "bp-" + patientId,
+                    "status", "final",
+                    "category", List.of(Map.of(
+                        "coding", List.of(Map.of(
+                            "system", "http://terminology.hl7.org/CodeSystem/observation-category",
+                            "code", "vital-signs",
+                            "display", "Vital Signs"
+                        ))
+                    )),
+                    "code", Map.of(
+                        "coding", List.of(Map.of(
+                            "system", "http://loinc.org",
+                            "code", "85354-9",
+                            "display", "Blood pressure panel with all children optional"
+                        ))
+                    ),
+                    "subject", Map.of("reference", "Patient/" + patientId),
+                    "effectiveDateTime", java.time.LocalDateTime.now().toString(),
+                    "component", List.of(
+                        Map.of(
+                            "code", Map.of(
+                                "coding", List.of(Map.of(
+                                    "system", "http://loinc.org",
+                                    "code", "8480-6",
+                                    "display", "Systolic blood pressure"
+                                ))
+                            ),
+                            "valueQuantity", Map.of(
+                                "value", 120,
+                                "unit", "mmHg",
+                                "system", "http://unitsofmeasure.org",
+                                "code", "mm[Hg]"
+                            )
+                        ),
+                        Map.of(
+                            "code", Map.of(
+                                "coding", List.of(Map.of(
+                                    "system", "http://loinc.org",
+                                    "code", "8462-4",
+                                    "display", "Diastolic blood pressure"
+                                ))
+                            ),
+                            "valueQuantity", Map.of(
+                                "value", 80,
+                                "unit", "mmHg",
+                                "system", "http://unitsofmeasure.org",
+                                "code", "mm[Hg]"
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        
+        bundle.put("entry", entries);
+        bundle.put("total", entries.size());
+        
+        return bundle;
     }
 }

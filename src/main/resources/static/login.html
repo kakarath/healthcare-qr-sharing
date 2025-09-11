@@ -41,8 +41,8 @@
                         
                         <div class="mt-4">
                             <h5>Demo Accounts:</h5>
-                            <p><strong>Patient:</strong> patient@example.com / password</p>
-                            <p><strong>Provider:</strong> provider@example.com / password</p>
+                            <p><strong>Patient:</strong> john.doe@example.com / patient123</p>
+                            <p><strong>Provider:</strong> provider@hospital.com / provider123</p>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
             const userType = document.getElementById('userType').value;
             
             try {
-                const response = await fetch('/api/auth/login', {
+                const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

@@ -127,6 +127,7 @@ docker compose down && mvn clean package -DskipTests && docker compose up -d
 pkill -f java
 
 pkill -f java && mvn clean compile && mvn spring-boot:run -Dspring-boot.run.main-class=com.healthcare.MinimalApp && docker compose down && docker compose up -d
+docker system prune -f
 ```
 
 see --> Error response from daemon: ports are not available: exposing port TCP 0.0.0.0:8080 -> 127.0.0.1:0: listen tcp 0.0.0.0:8080: bind: address already in use
@@ -170,4 +171,8 @@ Main App: http://localhost:8080/
 Status Dashboard: http://localhost:8080/status.html
 Health Check: http://localhost:8080/api/health
 Version Info: http://localhost:8080/api/version
+http://localhost:8080/api/banner
 ```
+
+clear cache
+``` cmd + shift + R
