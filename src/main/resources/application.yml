@@ -74,7 +74,7 @@ healthcare:
 server:
   port: 8080
   ssl:
-    enabled: ${SSL_ENABLED:false}
+    enabled: ${SSL_ENABLED:true}
     key-store: ${SSL_KEYSTORE:classpath:keystore.p12}
     key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
     key-store-type: PKCS12

@@ -14,7 +14,7 @@ services:
       - DB_URL=jdbc:postgresql://postgres:5432/healthcare_qr
       - DB_USERNAME=healthcare_user
       - DB_PASSWORD=healthcare_pass
-      - SSL_ENABLED=false  # Set to true for HTTPS
+      - SSL_ENABLED=true  # Set to true for HTTPS
     depends_on:
       - postgres
     networks:
