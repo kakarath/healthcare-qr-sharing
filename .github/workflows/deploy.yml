@@ -116,23 +116,72 @@ jobs:
             -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          POSTGRES_DB=healthcare
+          POSTGRES_USER=healthcare_user
+          POSTGRES_PASSWORD=healthcare_pass
+          ENCRYPTION_KEY=$(openssl rand -base64 32)
+          JWT_SECRET=$(openssl rand -base64 64)
+          DEFAULT_USER_PASSWORD=testpass123
+          DEFAULT_PROVIDER_PASSWORD=providerpass123
+          FHIR_SERVER_URL=https://hapi.fhir.org/baseR4
+          OAUTH_ISSUER_URI=https://auth.example.com
+          SPRING_PROFILES_ACTIVE=docker
+          EOF
+
       - name: Start test environment
         run: |
-          export ENCRYPTION_KEY=$(openssl rand -base64 32)
-          export DEFAULT_USER_PASSWORD="testpass123"
-          export DEFAULT_PROVIDER_PASSWORD="providerpass123"
-          docker-compose -f docker-compose.mobile.yml up -d
+          docker-compose up -d --build
 
-      - name: Wait for application
+      - name: Wait for application startup
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:8080/api/health; do sleep 2; done'
+          echo "Waiting for application to start..."
+          for i in {1..30}; do
+            if curl -f --silent http://localhost:8080/api/health > /dev/null 2>&1; then
+              echo "Application is ready!"
+              break
+            fi
+            echo "Attempt $i/30: Application not ready, waiting 5 seconds..."
+            sleep 5
+          done
+          
+          # Final check
+          if ! curl -f http://localhost:8080/api/health; then
+            echo "Application failed to start within 150 seconds"
+            docker-compose logs
+            exit 1
+          fi
 
       - name: Run mobile tests
         run: |
+          echo "Running mobile integration tests..."
+          
+          # Test health endpoint
+          curl -f http://localhost:8080/api/health
+          
+          # Test QR generation (simplified - no auth required for CI)
           curl -X POST http://localhost:8080/api/qr/generate \
             -H "Content-Type: application/json" \
-            -d '{"purpose": "Mobile CI/CD test"}'
+            -d '{"purpose": "Mobile CI/CD test"}' \
+            --fail --show-error
+
+      - name: Show application logs on failure
+        if: failure()
+        run: |
+          echo "=== Docker Compose Services ==="
+          docker-compose ps
+          echo "=== Application Logs ==="
+          docker-compose logs app
+          echo "=== Database Logs ==="
+          docker-compose logs db
+          echo "=== Docker Images ==="
+          docker images
+          echo "=== System Resources ==="
+          df -h
+          free -h
 
       - name: Cleanup
         if: always()
-        run: docker-compose -f docker-compose.mobile.yml down -v
+        run: docker-compose down -v
