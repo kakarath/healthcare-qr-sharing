@@ -118,12 +118,16 @@ jobs:
 
       - name: Create .env file
         run: |
+          # Generate keys without problematic characters
+          ENCRYPTION_KEY=$(openssl rand -hex 32)
+          JWT_SECRET=$(openssl rand -hex 64)
+          
           cat > .env << EOF
           POSTGRES_DB=healthcare
           POSTGRES_USER=healthcare_user
           POSTGRES_PASSWORD=healthcare_pass
-          ENCRYPTION_KEY=$(openssl rand -base64 32)
-          JWT_SECRET=$(openssl rand -base64 64)
+          ENCRYPTION_KEY=${ENCRYPTION_KEY}
+          JWT_SECRET=${JWT_SECRET}
           DEFAULT_USER_PASSWORD=testpass123
           DEFAULT_PROVIDER_PASSWORD=providerpass123
           FHIR_SERVER_URL=https://hapi.fhir.org/baseR4
