@@ -48,23 +48,19 @@
         // Load app version and status on page load
         async function loadAppInfo() {
             try {
-                // Get version info
-                const versionResponse = await fetch('/api/version');
-                const versionData = await versionResponse.json();
-                
-                // Get banner/status info
-                const bannerResponse = await fetch('/api/banner');
-                const bannerData = await bannerResponse.json();
+                // Get health info (working endpoint)
+                const healthResponse = await fetch('/api/health');
+                const healthData = await healthResponse.json();
                 
                 document.getElementById('versionInfo').innerHTML = 
-                    `<strong>Version:</strong> ${versionData.version} | <strong>Build:</strong> ${versionData.buildDate}`;
+                    `<strong>Version:</strong> ${healthData.version} | <strong>Build:</strong> ${healthData.timestamp}`;
                 
                 document.getElementById('statusInfo').innerHTML = 
-                    `<strong>Status:</strong> ${bannerData.status} | <strong>Uptime:</strong> ${bannerData.uptime}`;
+                    `<strong>Status:</strong> ${healthData.status} | <strong>Uptime:</strong> ${healthData.uptime}`;
                 
                 // Update alert class based on status
                 const statusDiv = document.getElementById('appStatus');
-                if (bannerData.status === 'UP') {
+                if (healthData.status === 'UP') {
                     statusDiv.className = 'alert alert-success';
                 } else {
                     statusDiv.className = 'alert alert-danger';

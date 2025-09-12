@@ -77,6 +77,76 @@
                                 <input type="date" class="form-control" id="dateOfBirth">
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Gender (FHIR)</label>
+                                <select class="form-control" id="gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                    <option value="other">Other</option>
+                                    <option value="unknown">Unknown</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Marital Status (FHIR)</label>
+                                <select class="form-control" id="maritalStatus">
+                                    <option value="">Select Marital Status</option>
+                                    <option value="S">Never Married</option>
+                                    <option value="M">Married</option>
+                                    <option value="D">Divorced</option>
+                                    <option value="W">Widowed</option>
+                                    <option value="A">Annulled</option>
+                                    <option value="L">Legally Separated</option>
+                                    <option value="P">Polygamous</option>
+                                    <option value="T">Domestic Partner</option>
+                                    <option value="U">Unmarried</option>
+                                    <option value="UNK">Unknown</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Communication</label>
+                                <select class="form-control" id="communication">
+                                    <option value="">Select Preferred Language</option>
+                                    <option value="English">English</option>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="German">German</option>
+                                    <option value="Igbo">Igbo</option>
+                                    <option value="Ijaw">Ijaw</option>
+                                    <option value="Swahili">Swahili</option>
+                                    <option value="Pidgin">Pidgin English</option>
+                                    <option value="Cantonese">Cantonese</option>
+                                    <option value="Arabic">Arabis</option>
+                                    <option value="Telugu">Telugu</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control" id="address" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Home Phone</label>
+                                <input type="number" class="form-control" id="homePhone">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mobile Phone</label>
+                                <input type="number" class="form-control" id="mobilePhone">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Communication</label>
+                                <select class="form-control" id="communication">
+                                    <option value="">Select Preferred Language</option>
+                                    <option value="English">English</option>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="German">German</option>
+                                    <option value="Igbo">Igbo</option>
+                                    <option value="Ijaw">Ijaw</option>
+                                    <option value="Swahili">Swahili</option>
+                                    <option value="Pidgin">Pidgin English</option>
+                                    <option value="Cantonese">Cantonese</option>
+                                    <option value="Arabic">Arabis</option>
+                                    <option value="Telugu">Telugu</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Blood Type</label>
                                 <select class="form-control" id="bloodType">
                                     <option value="">Select Blood Type</option>
@@ -103,8 +173,24 @@
                                 <textarea class="form-control" id="conditions" rows="2"></textarea>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label">Next of Kin</label>
+                                <input type="text" class="form-control" id="nextOfKin">
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">Emergency Contact</label>
                                 <input type="text" class="form-control" id="emergencyContact">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Medical Record Number (MRN)</label>
+                                <input type="text" class="form-control" id="mrn" placeholder="Hospital MRN">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Social Security Number</label>
+                                <input type="text" class="form-control" id="ssn" placeholder="XXX-XX-XXXX">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Insurance ID</label>
+                                <input type="text" class="form-control" id="insuranceId">
                             </div>
                         </form>
                     </div>
@@ -259,15 +345,47 @@
         }
 
         function displayPatientData(data) {
+            // Handle both legacy and FHIR format
+            const birthDate = data.birthDate || data.dateOfBirth || 'Not set';
+            const gender = data.gender || 'Not set';
+            const maritalStatus = data.maritalStatus?.coding?.[0]?.display || data.maritalStatus || 'Not set';
+            const communication = data.communication?.[0]?.language?.coding?.[0]?.display || 'Not set';
+            
             document.getElementById('patientData').innerHTML = `
                 <div class="small">
-                    <p><strong>DOB:</strong> ${data.dateOfBirth || 'Not set'}</p>
+                    <p><strong>FHIR ID:</strong> ${data.id || 'Not set'}</p>
+                    <p><strong>DOB:</strong> ${birthDate}</p>
+                    <p><strong>Gender:</strong> ${gender}</p>
+                    <p><strong>Marital Status:</strong> ${maritalStatus}</p>
+                    <p><strong>Language:</strong> ${communication}</p>
                     <p><strong>Blood Type:</strong> ${data.bloodType || 'Not set'}</p>
                     <p><strong>Allergies:</strong> ${data.allergies ? data.allergies.join(', ') : 'None listed'}</p>
                     <p><strong>Medications:</strong> ${data.medications ? data.medications.join(', ') : 'None listed'}</p>
                     <p><strong>Emergency Contact:</strong> ${data.emergencyContact || 'Not set'}</p>
+                    <button class="btn btn-info btn-sm mt-2" onclick="viewFHIRData()">View FHIR Resource</button>
                 </div>
             `;
+        }
+        
+        async function viewFHIRData() {
+            try {
+                const response = await fetch('/api/patients/fhir/patient-001');
+                const fhirData = await response.json();
+                
+                // Display FHIR data in a modal or new window
+                const fhirWindow = window.open('', '_blank', 'width=800,height=600');
+                fhirWindow.document.write(`
+                    <html>
+                        <head><title>FHIR Patient Resource</title></head>
+                        <body>
+                            <h2>FHIR R4 Patient Resource</h2>
+                            <pre style="background: #f5f5f5; padding: 15px; border-radius: 5px;">${JSON.stringify(fhirData, null, 2)}</pre>
+                        </body>
+                    </html>
+                `);
+            } catch (error) {
+                alert('Error loading FHIR data: ' + error.message);
+            }
         }
 
         function editPatientData() {
@@ -277,11 +395,24 @@
 
         async function savePatientData() {
             const patientData = {
-                dateOfBirth: document.getElementById('dateOfBirth').value,
+                // FHIR-compliant fields
+                birthDate: document.getElementById('dateOfBirth').value,
+                gender: document.getElementById('gender').value,
+                maritalStatus: document.getElementById('maritalStatus').value,
+                communication: document.getElementById('communication').value,
+                address: document.getElementById('address').value,
+                homePhone: document.getElementById('homePhone').value,
+                mobilePhone: document.getElementById('mobilePhone').value,
+                mrn: document.getElementById('mrn').value,
+                ssn: document.getElementById('ssn').value,
+                insuranceId: document.getElementById('insuranceId').value,
+                
+                // Clinical data
                 bloodType: document.getElementById('bloodType').value,
                 allergies: document.getElementById('allergies').value.split(',').map(s => s.trim()).filter(s => s),
                 medications: document.getElementById('medications').value.split(',').map(s => s.trim()).filter(s => s),
                 conditions: document.getElementById('conditions').value.split(',').map(s => s.trim()).filter(s => s),
+                nextOfKin: document.getElementById('nextOfKin').value,
                 emergencyContact: document.getElementById('emergencyContact').value
             };
 
@@ -300,7 +431,7 @@
                 if (data.success) {
                     displayPatientData(data.data);
                     bootstrap.Modal.getInstance(document.getElementById('editDataModal')).hide();
-                    alert('Patient data updated successfully!');
+                    alert('Patient data updated successfully! FHIR resource updated.');
                 } else {
                     alert('Error: ' + data.message);
                 }

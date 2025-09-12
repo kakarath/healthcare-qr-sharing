@@ -7,7 +7,7 @@ if (document.getElementById('qrForm')) {
         const dataTypes = formData.getAll('dataTypes');
         
         if (dataTypes.length === 0) {
-            alert('Please select at least one data type to share');
+            showMessage('Please select at least one data type to share', 'warning');
             return;
         }
         
@@ -33,10 +33,10 @@ if (document.getElementById('qrForm')) {
             } else {
                 const errorText = await response.text();
                 console.error('QR Error:', errorText);
-                alert('Error: ' + response.status + ' - ' + errorText);
+                showMessage('Error: ' + response.status + ' - ' + errorText, 'error');
             }
         } catch (error) {
-            alert('Error: ' + error.message);
+            showMessage('Error: ' + error.message, 'error');
         }
     });
 }
@@ -71,9 +71,9 @@ async function cancelSession(sessionId) {
         const generateBtn = document.querySelector('button[type="submit"]');
         generateBtn.disabled = false;
         generateBtn.textContent = 'Generate QR Code';
-        alert('QR session cancelled');
+        showMessage('QR session cancelled', 'success');
     } catch (error) {
-        alert('Error cancelling session: ' + error.message);
+        showMessage('Error cancelling session: ' + error.message, 'error');
     }
 }
 
@@ -120,7 +120,7 @@ async function startQRScan() {
         button.classList.remove('btn-success');
         button.classList.add('btn-danger');
     } catch (error) {
-        alert('Camera error: ' + error.message);
+        showMessage('Camera error: ' + error.message, 'error');
         isScanning = false;
     }
 }
@@ -166,10 +166,10 @@ async function processQRScan(qrData) {
             stopQRScan();
         } else {
             const error = await response.json();
-            alert('Scan error: ' + error.message);
+            showMessage('Scan error: ' + error.message, 'error');
         }
     } catch (error) {
-        alert('Network error: ' + error.message);
+        showMessage('Network error: ' + error.message, 'error');
     }
 }
 
@@ -224,4 +224,32 @@ function getAuthToken() {
     // Implementation depends on your auth system
     // This could be from localStorage, sessionStorage, or a cookie
     return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+}
+
+function showMessage(message, type) {
+    // Create secure message display without innerHTML
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `alert alert-${type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'success'}`;
+    messageDiv.textContent = message; // Use textContent to prevent XSS
+    
+    // Find or create message container
+    let container = document.getElementById('messageContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'messageContainer';
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+    }
+    
+    container.appendChild(messageDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (messageDiv.parentNode) {
+            messageDiv.parentNode.removeChild(messageDiv);
+        }
+    }, 5000);
 }

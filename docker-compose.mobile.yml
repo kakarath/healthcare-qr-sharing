@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+      - "8443:8443"  # HTTPS for mobile camera access
+    environment:
+      - SPRING_PROFILES_ACTIVE=mobile
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - DEFAULT_USER_PASSWORD=${DEFAULT_USER_PASSWORD:-testpass123}
+      - DEFAULT_PROVIDER_PASSWORD=${DEFAULT_PROVIDER_PASSWORD:-providerpass123}
+      - DB_URL=jdbc:postgresql://postgres:5432/healthcare_qr
+      - DB_USERNAME=healthcare_user
+      - DB_PASSWORD=healthcare_pass
+      - SSL_ENABLED=true  # Set to true for HTTPS
+    depends_on:
+      - postgres
+    networks:
+      - healthcare-network
+    volumes:
+      - ./ssl:/app/ssl:ro
+      - ./logs:/app/logs
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=healthcare_qr
+      - POSTGRES_USER=healthcare_user
+      - POSTGRES_PASSWORD=healthcare_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    networks:
+      - healthcare-network
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - healthcare-network
+
+volumes:
+  postgres_data:
+
+networks:
+  healthcare-network:
+    driver: bridge

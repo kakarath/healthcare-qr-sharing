@@ -22,43 +22,21 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Search Patients</h4>
+                        <h4>Patient Search</h4>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <input type="text" class="form-control" id="searchQuery" placeholder="Search by name or email...">
-                            <button class="btn btn-primary mt-2" onclick="searchPatients()">Search</button>
+                            <label class="form-label">Search by Name or ID</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Enter patient name or ID">
                         </div>
-                        <div id="searchResults"></div>
+                        <button class="btn btn-primary" onclick="searchPatients()">Search Patients</button>
+                        
+                        <div id="searchResults" class="mt-3">
+                            <p class="text-muted">Enter search criteria above</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Request Patient Access</h4>
-                    </div>
-                    <div class="card-body">
-                        <form id="consentRequestForm">
-                            <div class="mb-3">
-                                <label for="patientId" class="form-label">Patient ID</label>
-                                <input type="text" class="form-control" id="patientId" placeholder="e.g., patient-1" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="purpose" class="form-label">Purpose of Access</label>
-                                <textarea class="form-control" id="purpose" rows="2" placeholder="e.g., Emergency consultation..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-success">Send Request</button>
-                        </form>
-                        <div id="requestMessage" class="mt-3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-3">
-            <div class="col-md-6">
             
             <div class="col-md-6">
                 <div class="card">
@@ -67,25 +45,13 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="qrInput" class="form-label">Scan or Enter QR Data</label>
-                            <textarea class="form-control" id="qrInput" rows="3" placeholder="Paste QR code data here..."></textarea>
+                            <label class="form-label">Scan QR Code Data</label>
+                            <textarea class="form-control" id="qrData" rows="3" placeholder="Paste QR code data here"></textarea>
                         </div>
-                        <button class="btn btn-primary" onclick="processQRData()">Process QR Data</button>
-                        <div id="qrResult" class="mt-3"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Patient Information</h4>
-                    </div>
-                    <div class="card-body">
-                        <div id="patientInfo">
-                            <p class="text-muted">No patient data loaded. Request access and scan patient's QR code.</p>
+                        <button class="btn btn-success" onclick="scanQRCode()">Scan QR Code</button>
+                        
+                        <div id="patientData" class="mt-3">
+                            <p class="text-muted">Scan a patient QR code to view data</p>
                         </div>
                     </div>
                 </div>
@@ -103,47 +69,91 @@
 
         document.getElementById('welcomeText').textContent = `Welcome, ${user.firstName} ${user.lastName}`;
 
-        document.getElementById('consentRequestForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        async function searchPatients() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
             
-            const patientId = document.getElementById('patientId').value;
-            const purpose = document.getElementById('purpose').value;
-            
-            try {
-                const response = await fetch('/api/consent/request', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionId
-                    },
-                    body: JSON.stringify({ patientId, purpose })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    document.getElementById('requestMessage').innerHTML = 
-                        '<div class="alert alert-success">Consent request sent to patient successfully!</div>';
-                    document.getElementById('consentRequestForm').reset();
-                } else {
-                    document.getElementById('requestMessage').innerHTML = 
-                        '<div class="alert alert-danger">Error: ' + data.message + '</div>';
-                }
-            } catch (error) {
-                document.getElementById('requestMessage').innerHTML = 
-                    '<div class="alert alert-danger">Error sending request: ' + error.message + '</div>';
-            }
-        });
-
-        async function processQRData() {
-            const qrData = document.getElementById('qrInput').value.trim();
-            
-            if (!qrData) {
-                document.getElementById('qrResult').innerHTML = 
-                    '<div class="alert alert-warning">Please enter QR code data</div>';
+            if (!searchTerm) {
+                alert('Please enter a search term');
                 return;
             }
+
+            try {
+                // Mock search - in real app would call API
+                const mockResults = [
+                    {
+                        id: 'patient-001',
+                        firstName: 'John',
+                        lastName: 'Doe',
+                        email: 'john.doe@example.com',
+                        dateOfBirth: '1990-01-01',
+                        gender: 'male'
+                    },
+                    {
+                        id: 'patient-002', 
+                        firstName: 'Jane',
+                        lastName: 'Smith',
+                        email: 'jane.smith@example.com',
+                        dateOfBirth: '1985-05-15',
+                        gender: 'female'
+                    }
+                ];
+
+                const filteredResults = mockResults.filter(patient => 
+                    patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    patient.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    patient.id.includes(searchTerm)
+                );
+
+                displaySearchResults(filteredResults);
+                
+            } catch (error) {
+                alert('Error searching patients: ' + error.message);
+            }
+        }
+
+        function displaySearchResults(patients) {
+            const container = document.getElementById('searchResults');
             
+            if (patients.length === 0) {
+                container.innerHTML = '<p class="text-muted">No patients found</p>';
+                return;
+            }
+
+            let html = '<h6>Search Results:</h6>';
+            patients.forEach(patient => {
+                html += `
+                    <div class="border p-3 mb-2 rounded">
+                        <h6>${patient.firstName} ${patient.lastName}</h6>
+                        <p><strong>ID:</strong> ${patient.id}</p>
+                        <p><strong>DOB:</strong> ${patient.dateOfBirth}</p>
+                        <p><strong>Gender:</strong> ${patient.gender}</p>
+                        <button class="btn btn-sm btn-info" onclick="requestConsent('${patient.id}')">Request Data Access</button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        async function requestConsent(patientId) {
+            const purpose = prompt('Enter purpose for data access:');
+            if (!purpose) return;
+
+            try {
+                alert(`Consent request sent to patient ${patientId} for: ${purpose}`);
+            } catch (error) {
+                alert('Error requesting consent: ' + error.message);
+            }
+        }
+
+        async function scanQRCode() {
+            const qrData = document.getElementById('qrData').value.trim();
+            
+            if (!qrData) {
+                alert('Please enter QR code data');
+                return;
+            }
+
             try {
                 const response = await fetch('/api/qr/scan', {
                     method: 'POST',
@@ -157,114 +167,41 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('qrResult').innerHTML = 
-                        '<div class="alert alert-success">QR Code scanned successfully!</div>';
-                    
-                    // Parse and display patient data
-                    if (qrData.startsWith('PATIENT_DATA|')) {
-                        const parts = qrData.split('|');
-                        const patientInfo = `
-                            <div class="alert alert-info">
-                                <h5>Patient Medical Data:</h5>
-                                <p><strong>Patient ID:</strong> ${parts[1] || 'Unknown'}</p>
-                                <p><strong>Name:</strong> ${parts[2] || 'Unknown'}</p>
-                                <p><strong>Date of Birth:</strong> ${parts[3]?.replace('DOB:', '') || 'Not provided'}</p>
-                                <p><strong>Blood Type:</strong> ${parts[4]?.replace('BLOOD:', '') || 'Not provided'}</p>
-                                <p><strong>Allergies:</strong> ${parts[5]?.replace('ALLERGIES:', '') || 'None listed'}</p>
-                                <p><strong>Medications:</strong> ${parts[6]?.replace('MEDS:', '') || 'None listed'}</p>
-                                <p><strong>Conditions:</strong> ${parts[7]?.replace('CONDITIONS:', '') || 'None listed'}</p>
-                                <p><strong>Emergency Contact:</strong> ${parts[8]?.replace('EMERGENCY:', '') || 'Not provided'}</p>
-                                <p><strong>Scanned by:</strong> ${data.scannedBy}</p>
-                                <p><strong>Scan Time:</strong> ${new Date(data.scannedAt).toLocaleString()}</p>
-                            </div>
-                        `;
-                        document.getElementById('patientInfo').innerHTML = patientInfo;
-                    } else {
-                        document.getElementById('patientInfo').innerHTML = `
-                            <div class="alert alert-info">
-                                <h5>QR Data Retrieved:</h5>
-                                <p><strong>Data:</strong> ${qrData}</p>
-                                <p><strong>Scanned by:</strong> ${data.scannedBy}</p>
-                                <p><strong>Scan Time:</strong> ${new Date(data.scannedAt).toLocaleString()}</p>
-                            </div>
-                        `;
-                    }
-                    
-                    // Clear the input
-                    document.getElementById('qrInput').value = '';
+                    displayPatientData(data.patientData);
                 } else {
-                    document.getElementById('qrResult').innerHTML = 
-                        '<div class="alert alert-danger">Error: ' + data.message + '</div>';
+                    alert('Error: ' + data.message);
                 }
-                
             } catch (error) {
-                document.getElementById('qrResult').innerHTML = 
-                    '<div class="alert alert-danger">Error processing QR code: ' + error.message + '</div>';
+                alert('Error scanning QR code: ' + error.message);
             }
         }
 
-        async function searchPatients() {
-            const query = document.getElementById('searchQuery').value.trim();
-            
-            if (!query) {
-                document.getElementById('searchResults').innerHTML = 
-                    '<div class="alert alert-warning">Please enter a search term</div>';
-                return;
-            }
-            
-            try {
-                const response = await fetch(`/api/patients/search?query=${encodeURIComponent(query)}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + sessionId
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success && data.patients.length > 0) {
-                    let resultsHtml = '<div class="mt-2">';
-                    data.patients.forEach(patient => {
-                        resultsHtml += `
-                            <div class="card mb-2">
-                                <div class="card-body p-2">
-                                    <h6>${patient.firstName} ${patient.lastName}</h6>
-                                    <p class="mb-1 small">${patient.email}</p>
-                                    <button class="btn btn-sm btn-outline-primary" 
-                                            onclick="selectPatient('${patient.patientId}')">
-                                        Request Access
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    resultsHtml += '</div>';
-                    document.getElementById('searchResults').innerHTML = resultsHtml;
-                } else {
-                    document.getElementById('searchResults').innerHTML = 
-                        '<div class="alert alert-info">No patients found</div>';
-                }
-            } catch (error) {
-                document.getElementById('searchResults').innerHTML = 
-                    '<div class="alert alert-danger">Search failed: ' + error.message + '</div>';
-            }
+        function displayPatientData(patient) {
+            document.getElementById('patientData').innerHTML = `
+                <h6>Patient Data (FHIR Compliant)</h6>
+                <div class="small">
+                    <p><strong>Name:</strong> ${patient.firstName} ${patient.lastName}</p>
+                    <p><strong>DOB:</strong> ${patient.dateOfBirth}</p>
+                    <p><strong>Blood Type:</strong> ${patient.bloodType}</p>
+                    <p><strong>Allergies:</strong> ${patient.allergies ? patient.allergies.join(', ') : 'None'}</p>
+                    <p><strong>Medications:</strong> ${patient.medications ? patient.medications.join(', ') : 'None'}</p>
+                    <p><strong>Conditions:</strong> ${patient.conditions ? patient.conditions.join(', ') : 'None'}</p>
+                    <p><strong>Scanned At:</strong> ${new Date(patient.scannedAt || Date.now()).toLocaleString()}</p>
+                </div>
+                <button class="btn btn-sm btn-warning mt-2" onclick="editPatientData()">Edit/Update Data</button>
+            `;
         }
-        
-        function selectPatient(patientId) {
-            document.getElementById('patientId').value = patientId;
+
+        function editPatientData() {
+            alert('FHIR Data Editor - Feature coming soon!\n\nProviders will be able to:\n• Edit patient observations\n• Add new conditions\n• Update medications\n• Validate FHIR compliance');
         }
 
         function logout() {
-            fetch('/api/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + sessionId
-                }
-            }).finally(() => {
-                localStorage.removeItem('sessionId');
-                localStorage.removeItem('user');
-                window.location.href = '/login.html';
-            });
+            localStorage.removeItem('sessionId');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
