@@ -76,7 +76,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build application
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build with Maven
         run: mvn clean package -DskipTests
 
       - name: Set up Docker Buildx
@@ -89,10 +95,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify JAR file exists
+        run: |
+          ls -la target/
+          ls -la target/*.jar
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha

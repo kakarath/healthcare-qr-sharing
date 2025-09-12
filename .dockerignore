@@ -1,0 +1,20 @@
+# Include target directory for JAR files
+!target/*.jar
+
+# Exclude everything else in target except JARs
+target/*
+!target/*.jar
+
+# Standard exclusions
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+.env
+.env.local
+.env.production
+logs/
+*.log
