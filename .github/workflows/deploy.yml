@@ -133,6 +133,7 @@ jobs:
           FHIR_SERVER_URL=https://hapi.fhir.org/baseR4
           OAUTH_ISSUER_URI=https://auth.example.com
           SPRING_PROFILES_ACTIVE=docker
+          SSL_ENABLED=false
           EOF
 
       - name: Start test environment
